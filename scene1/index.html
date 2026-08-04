@@ -1,0 +1,1256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Peril — summer ’98 walk</title>
+  <style>
+    html, body { margin: 0; height: 100%; overflow: hidden; background: #9ec9e8; }
+
+    #overlay {
+      position: fixed; inset: 0; z-index: 10;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(158, 201, 232, 0.48);
+      backdrop-filter: blur(5px);
+      transition: opacity 0.9s ease;
+    }
+    #overlay.gone { opacity: 0; pointer-events: none; }
+    #play {
+      width: 96px; height: 96px;
+      padding: 0;
+      border-radius: 50%;
+      border: none;
+      background: #fff;
+      cursor: pointer;
+      /* circle with play-triangle hole so the scene shows through */
+      -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'%3E%3Cpath fill-rule='evenodd' d='M48 0a48 48 0 1 1 0 96 48 48 0 0 1 0-96zm-10 28l36 20-36 20V28z'/%3E%3C/svg%3E") center / 100% 100%;
+      mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'%3E%3Cpath fill-rule='evenodd' d='M48 0a48 48 0 1 1 0 96 48 48 0 0 1 0-96zm-10 28l36 20-36 20V28z'/%3E%3C/svg%3E") center / 100% 100%;
+      filter: drop-shadow(0 12px 24px rgba(45, 22, 48, 0.28));
+      transition: transform 0.15s ease, background 0.15s ease;
+    }
+    #play:hover { transform: scale(1.07); background: #fff6f1; }
+    #play:disabled { opacity: 0.6; cursor: wait; }
+
+    #keys {
+      position: fixed;
+      left: 50%;
+      bottom: 4%;
+      transform: translateX(-50%);
+      z-index: 5;
+      width: 420px;
+      height: 140px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.8s ease 0.3s;
+      --key-color: rgba(255, 255, 255, 0.55);
+      --key-hover: rgba(255, 255, 255, 0.85);
+      --ku: 44px; /* key unit */
+    }
+    #keys.show { opacity: 1; pointer-events: auto; }
+    .key {
+      position: absolute;
+      width: 42px; height: 42px;
+      left: calc(var(--c) * var(--ku) + var(--r) * 14px);
+      top: calc(var(--r) * var(--ku));
+      padding: 0; border: none; background: transparent;
+      cursor: pointer;
+      color: var(--key-color);
+      opacity: 1;
+      transition:
+        color 0.12s ease,
+        transform 0.12s ease,
+        opacity 1.35s cubic-bezier(0.4, 0, 0.2, 1),
+        left 1.35s cubic-bezier(0.4, 0, 0.2, 1),
+        top 1.35s cubic-bezier(0.4, 0, 0.2, 1);
+      touch-action: none;
+      user-select: none;
+    }
+    /* Spelled ADVOCATE before fanning to QWERTY (extra A is a dummy that fades) */
+    #keys.advocate .key {
+      left: calc(var(--wi) * 48px + 18px);
+      top: 49px;
+    }
+    .key-dummy {
+      pointer-events: none;
+      cursor: default;
+    }
+    #keys:not(.advocate) .key-dummy {
+      opacity: 0;
+    }
+    .key:hover { color: var(--key-hover); }
+    .key:active, .key.hit {
+      color: #fff;
+      transform: translateY(1px) scale(0.94);
+    }
+    .key svg { display: block; width: 100%; height: 100%; }
+  </style>
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+    }
+  }
+  </script>
+</head>
+<body>
+  <div id="overlay">
+    <button id="play" aria-label="Play"></button>
+  </div>
+
+  <div id="keys" class="advocate" aria-hidden="true">
+    <!-- ADVOCATE: full word first; second A is dummy and fades into the real A slot -->
+    <button class="key" data-key="a" style="--wi:0;--c:0;--r:1" aria-label="A — 1/64 stutter"><svg viewBox="0 0 40 40"><rect x="1.5" y="1.5" width="37" height="37" rx="7" fill="none" stroke="currentColor" stroke-width="1.5"/><text x="20" y="26" text-anchor="middle" font-family="system-ui,sans-serif" font-size="15" font-weight="500" fill="currentColor">A</text></svg></button>
+    <button class="key" data-key="d" style="--wi:1;--c:2;--r:1" aria-label="D — tape scrub"><svg viewBox="0 0 40 40"><rect x="1.5" y="1.5" width="37" height="37" rx="7" fill="none" stroke="currentColor" stroke-width="1.5"/><text x="20" y="26" text-anchor="middle" font-family="system-ui,sans-serif" font-size="15" font-weight="500" fill="currentColor">D</text></svg></button>
+    <button class="key" data-key="v" style="--wi:2;--c:3;--r:2" aria-label="V — reverse 1/64"><svg viewBox="0 0 40 40"><rect x="1.5" y="1.5" width="37" height="37" rx="7" fill="none" stroke="currentColor" stroke-width="1.5"/><text x="20" y="26" text-anchor="middle" font-family="system-ui,sans-serif" font-size="15" font-weight="500" fill="currentColor">V</text></svg></button>
+    <button class="key" data-key="o" style="--wi:3;--c:8;--r:0" aria-label="O — 1/32 stutter"><svg viewBox="0 0 40 40"><rect x="1.5" y="1.5" width="37" height="37" rx="7" fill="none" stroke="currentColor" stroke-width="1.5"/><text x="20" y="26" text-anchor="middle" font-family="system-ui,sans-serif" font-size="15" font-weight="500" fill="currentColor">O</text></svg></button>
+    <button class="key" data-key="c" style="--wi:4;--c:2;--r:2" aria-label="C — reverse tape"><svg viewBox="0 0 40 40"><rect x="1.5" y="1.5" width="37" height="37" rx="7" fill="none" stroke="currentColor" stroke-width="1.5"/><text x="20" y="26" text-anchor="middle" font-family="system-ui,sans-serif" font-size="15" font-weight="500" fill="currentColor">C</text></svg></button>
+    <button class="key key-dummy" style="--wi:5;--c:0;--r:1" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 40 40"><rect x="1.5" y="1.5" width="37" height="37" rx="7" fill="none" stroke="currentColor" stroke-width="1.5"/><text x="20" y="26" text-anchor="middle" font-family="system-ui,sans-serif" font-size="15" font-weight="500" fill="currentColor">A</text></svg></button>
+    <button class="key" data-key="t" style="--wi:6;--c:4;--r:0" aria-label="T — 1/16 repeat"><svg viewBox="0 0 40 40"><rect x="1.5" y="1.5" width="37" height="37" rx="7" fill="none" stroke="currentColor" stroke-width="1.5"/><text x="20" y="26" text-anchor="middle" font-family="system-ui,sans-serif" font-size="15" font-weight="500" fill="currentColor">T</text></svg></button>
+    <button class="key" data-key="e" style="--wi:7;--c:2;--r:0" aria-label="E — soft reverse"><svg viewBox="0 0 40 40"><rect x="1.5" y="1.5" width="37" height="37" rx="7" fill="none" stroke="currentColor" stroke-width="1.5"/><text x="20" y="26" text-anchor="middle" font-family="system-ui,sans-serif" font-size="15" font-weight="500" fill="currentColor">E</text></svg></button>
+  </div>
+
+  <script src="./peril.js"></script>
+  <script>
+    // Bridge between the audio engine (this script) and the 3D stage (module below).
+    window.stage = {
+      glitch: null,         // (holdSeconds, walkMult) => void — timed auto break
+      holdGlitch: null,     // (walkMult) => void — key hold start
+      releaseGlitch: null,  // () => void — key hold end
+      bpm: 92,
+      walkMult: 1,
+      started: false,
+      playing: false
+    }
+  </script>
+
+  <script>
+    // Fixed mix settings (former slider values)
+    const BPM = 92
+    const WARMTH = 2300  // filter cutoff Hz
+    const HISS = 0.018   // vinyl noise gain
+    const CHAOS = 0.38   // break / repeat probability
+
+    // F minor–ish palette (nostalgic / pastoral)
+    const ROOT = 53 // F3
+    const CHORDS = [
+      [65, 68, 72, 75], // Fm7
+      [63, 67, 70, 74], // Eb∆7 colour
+      [70, 73, 77, 80], // Bbm
+      [60, 63, 67, 70]  // Ab∆7
+    ]
+    const PROGRESSION = [0, 1, 2, 3]
+
+    let clock, pad, lead, filter, vinyl, master, kick, snare, hat, drumsBus, bend, bass, reverb
+    let bassRoot = 41 // F2 — follows the chord progression
+    let reverbTimer = null
+    let keyHeld = null
+
+    const REVERB_DRY = 0.97
+    const REVERB_WET = 0.12
+    const REVERB_BREAK_DRY = 0.7
+    const REVERB_BREAK_WET = 0.38
+
+    const GROOVE = {
+      kick:  [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0],
+      snare: [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0.5],
+      hat:   [0.4, 0, 0.25, 0, 0.4, 0, 0.2, 0.15, 0.4, 0, 0.25, 0, 0.35, 0, 0.2, 0]
+    }
+
+    function playChord (notes, vel, time, dur) {
+      // subtle voicing drift: sometimes sprinkle a 9th on top, sometimes
+      // thin the chord by dropping the highest note
+      let list = notes
+      const r = Math.random()
+      if (r < 0.15) list = [...notes, notes[0] + 14]
+      else if (r < 0.25) list = notes.slice(0, -1)
+
+      list.forEach((n, i) => {
+        const t = time + i * (0.01 + Math.random() * 0.006)
+        pad.noteOn(n, vel * (0.85 + Math.random() * 0.15), { when: t })
+        pad.noteOff(n, { when: t + dur * (0.9 + Math.random() * 0.2) })
+      })
+    }
+
+    function pick (arr) { return arr[(Math.random() * arr.length) | 0] }
+
+    function envGain (param, time, peak, attack, decay) {
+      param.cancelScheduledValues(time)
+      param.setValueAtTime(0.0001, time)
+      param.linearRampToValueAtTime(Math.max(0.0001, peak), time + Math.max(0.001, attack))
+      param.exponentialRampToValueAtTime(0.0001, time + attack + Math.max(0.01, decay))
+    }
+
+    /**
+     * Analog-style synth drums (persistent voices, triggered via AudioParams).
+     */
+    function createKick () {
+      const body = new peril.Oscillator({ type: 0, freq: 55, gain: 0 })
+      const click = new peril.Noise({ type: peril.NOISE.WHITE, gain: 0 })
+      const clickHp = new peril.Filter({ type: 'highpass', freq: 800, Q: 0.7 })
+      const clickLp = new peril.Filter({ type: 'lowpass', freq: 3500, Q: 0.5 })
+      const out = new peril.Channel({ gain: 1 })
+
+      click.setOutput(clickHp)
+      clickHp.setOutput(clickLp)
+      body.setOutput(out)
+      clickLp.setOutput(out)
+
+      return {
+        output: out,
+        trigger (time, vel = 1) {
+          const v = 0.85 * vel
+          const start = 150 + Math.random() * 30
+          const end = 42 + Math.random() * 6
+          body.freqParam.cancelScheduledValues(time)
+          body.freqParam.setValueAtTime(start, time)
+          body.freqParam.exponentialRampToValueAtTime(end, time + 0.09)
+          envGain(body.gainParam, time, v, 0.002, 0.38)
+          envGain(click.gainParam, time, 0.35 * vel, 0.001, 0.025)
+        }
+      }
+    }
+
+    function createSnare () {
+      const tone = new peril.Oscillator({ type: 1, freq: 180, gain: 0 })
+      const noise = new peril.Noise({ type: peril.NOISE.WHITE, gain: 0 })
+      const noiseBp = new peril.Filter({ type: 'bandpass', freq: 2800, Q: 0.9 })
+      const noiseHp = new peril.Filter({ type: 'highpass', freq: 900, Q: 0.5 })
+      const out = new peril.Channel({ gain: 1 })
+
+      tone.setOutput(out)
+      noise.setOutput(noiseHp)
+      noiseHp.setOutput(noiseBp)
+      noiseBp.setOutput(out)
+
+      return {
+        output: out,
+        trigger (time, vel = 1) {
+          const pitch = 175 + Math.random() * 25
+          tone.freqParam.setValueAtTime(pitch, time)
+          tone.freqParam.exponentialRampToValueAtTime(pitch * 0.85, time + 0.08)
+          envGain(tone.gainParam, time, 0.28 * vel, 0.001, 0.12)
+          envGain(noise.gainParam, time, 0.55 * vel, 0.001, 0.16)
+        }
+      }
+    }
+
+    function createHat () {
+      const noise = new peril.Noise({ type: peril.NOISE.WHITE, gain: 0 })
+      const hp = new peril.Filter({ type: 'highpass', freq: 7000, Q: 0.8 })
+      const bp = new peril.Filter({ type: 'bandpass', freq: 9000, Q: 1.2 })
+      const metal = new peril.Oscillator({ type: 4, freq: 6400, gain: 0 })
+      const metalHp = new peril.Filter({ type: 'highpass', freq: 5000, Q: 0.6 })
+      const out = new peril.Channel({ gain: 1 })
+
+      noise.setOutput(hp)
+      hp.setOutput(bp)
+      bp.setOutput(out)
+      metal.setOutput(metalHp)
+      metalHp.setOutput(out)
+
+      return {
+        output: out,
+        trigger (time, vel = 1, open = false) {
+          const decay = open ? 0.22 : 0.045 + Math.random() * 0.02
+          envGain(noise.gainParam, time, 0.35 * vel, 0.001, decay)
+          envGain(metal.gainParam, time, 0.08 * vel, 0.001, decay * 0.7)
+          hp.setFreq(open ? 5500 : 7500 + Math.random() * 1500)
+        }
+      }
+    }
+
+    /**
+     * Funky mono bass — saw + sub sine through a resonant lowpass whose
+     * envelope "quacks" open with velocity.
+     */
+    function createBass () {
+      const saw = new peril.Oscillator({ type: 3, freq: 87, gain: 0 })
+      const sub = new peril.Oscillator({ type: 0, freq: 43.5, gain: 0 })
+      const flt = new peril.Filter({ type: 'lowpass', freq: 500, Q: 2.2 })
+      const out = new peril.Channel({ gain: 0.78 })
+
+      saw.setOutput(flt)
+      sub.setOutput(flt)
+      flt.setOutput(out)
+
+      return {
+        output: out,
+        trigger (time, note, vel = 1, len = 0.16) {
+          const f = peril.mtof(note)
+          saw.freqParam.setValueAtTime(f, time)
+          sub.freqParam.setValueAtTime(f * 0.5, time)
+          envGain(saw.gainParam, time, 0.38 * vel, 0.004, len)
+          envGain(sub.gainParam, time, 0.24 * vel, 0.004, len * 1.15)
+          flt.freqParam.cancelScheduledValues(time)
+          flt.freqParam.setValueAtTime(280 + 2100 * vel, time)
+          flt.freqParam.exponentialRampToValueAtTime(140, time + len + 0.05)
+        }
+      }
+    }
+
+    // 16-step funk line as [semitone offset from root, velocity, length in steps];
+    // null = rest. Root hits, ghost notes, octave pops, b7 pickups.
+    const BASS_PATTERN = [
+      [0, 1, 1.6],   null,          null,           [0, 0.4, 0.6],
+      null,          [12, 0.8, 0.8], null,          [0, 0.45, 0.6],
+      [0, 0.9, 1.2], null,          [10, 0.7, 0.8], [12, 0.6, 0.6],
+      null,          [0, 0.5, 0.6],  [7, 0.65, 0.8], [10, 0.55, 0.6]
+    ]
+
+    function bassHit (step, time) {
+      const hit = BASS_PATTERN[step]
+      if (!hit) return
+      const [off, vel, lenSteps] = hit
+      // subtle randomness: ghosts sometimes vanish, octaves sometimes drop
+      // back down, velocity breathes, timing pushes a hair
+      if (vel < 0.6 && Math.random() < 0.18) return
+      let note = bassRoot + (off === 12 && Math.random() < 0.15 ? 0 : off)
+      if (off === 0 && Math.random() < 0.05) note += 12
+      const t = time + Math.random() * 0.005
+      const v = Math.min(1, vel * (0.9 + Math.random() * 0.2))
+      bass.trigger(t, note, v, clock.stepSeconds * lenSteps)
+    }
+
+    /**
+     * Map a bend speed factor to a walk-pace multiplier, keeping direction
+     * (negative = walking backwards) but clamping magnitude to stay readable.
+     */
+    function walkMult (m) {
+      const sign = m < 0 ? -1 : 1
+      return sign * Math.min(4, Math.max(0.25, Math.abs(m)))
+    }
+
+    /** Swell reverb wet. Timed restore for auto breaks; open/close for key holds. */
+    function openReverb () {
+      if (!reverb) return
+      if (reverbTimer) { clearTimeout(reverbTimer); reverbTimer = null }
+      const now = peril.CONTEXT.currentTime
+      const wet = reverb.outputWet.gain
+      const dry = reverb.outputDry.gain
+      wet.cancelScheduledValues(now)
+      dry.cancelScheduledValues(now)
+      wet.setValueAtTime(wet.value, now)
+      dry.setValueAtTime(dry.value, now)
+      wet.linearRampToValueAtTime(REVERB_BREAK_WET, now + 0.05)
+      dry.linearRampToValueAtTime(REVERB_BREAK_DRY, now + 0.05)
+    }
+
+    function closeReverb () {
+      if (!reverb) return
+      if (reverbTimer) { clearTimeout(reverbTimer); reverbTimer = null }
+      const t = peril.CONTEXT.currentTime
+      const wet = reverb.outputWet.gain
+      const dry = reverb.outputDry.gain
+      wet.cancelScheduledValues(t)
+      dry.cancelScheduledValues(t)
+      wet.setValueAtTime(wet.value, t)
+      dry.setValueAtTime(dry.value, t)
+      wet.linearRampToValueAtTime(REVERB_WET, t + 0.35)
+      dry.linearRampToValueAtTime(REVERB_DRY, t + 0.35)
+    }
+
+    function swellReverb (holdSec) {
+      openReverb()
+      reverbTimer = setTimeout(closeReverb, Math.max(180, holdSec * 1000))
+    }
+
+    /** Shared side-effects for auto bend holds (timed). */
+    function fireGlitch (hold, mult) {
+      if (keyHeld) return // never interrupt a user key hold
+      swellReverb(hold)
+      window.stage.glitch && window.stage.glitch(hold, mult)
+    }
+
+    /** Tape / Data-bender break — scramble buffered drums. Camera cuts along. */
+    function startBreak () {
+      if (!bend || !clock || keyHeld) return
+      const hold = clock.stepSeconds * pick([8, 12, 16])
+      const kind = pick(['scatter', 'reverse', 'tape', 'scatter'])
+      if (kind === 'scatter') {
+        const slice = clock.stepSeconds * pick([4, 6, 8])
+        bend.scatter({ slice, hold, freeze: true })
+        fireGlitch(hold, walkMult(clock.stepSeconds / slice * 2))
+      } else if (kind === 'reverse') {
+        const rate = pick([1, 1.25, 0.75])
+        const h = hold * 0.7
+        bend.reverse({
+          slice: clock.stepSeconds * pick([2, 3, 4]),
+          hold: h,
+          rate
+        })
+        fireGlitch(h, walkMult(-rate))
+      } else {
+        const rate = pick([0.35, 0.5, -0.4, 0.7])
+        bend.tape({
+          slice: clock.stepSeconds * pick([4, 6, 8]),
+          hold,
+          rate
+        })
+        fireGlitch(hold, walkMult(rate))
+      }
+    }
+
+    /** Classic beat-repeat from the circular buffer. */
+    function startRepeat (steps) {
+      if (!bend || !clock || keyHeld) return
+      const n = steps != null ? steps : pick([2, 3, 4, 6, 8])
+      const div = pick([1, 2, 2, 4]) // 1/16, 1/32, 1/64 slices
+      const slice = clock.stepSeconds / div
+      const hold = clock.stepSeconds * n
+      const rate = pick([1, 1, 0.5, 1.5, -1])
+      bend.repeat({ slice, hold, rate, freeze: true })
+      fireGlitch(hold, walkMult(div * rate))
+    }
+
+    // Dedicated keyboard breaks — A D V O C A T E (unique keys at QWERTY spots)
+    const KEY_HOLD = 60
+
+    const KEY_BREAKS = {
+      a () { // snappy 1/64 beat-repeat stutter
+        bend.repeat({ slice: clock.stepSeconds / 4, hold: KEY_HOLD, rate: 1, freeze: true })
+        return walkMult(4)
+      },
+      d () { // slow tape scrub
+        bend.tape({ slice: clock.stepSeconds * 6, hold: KEY_HOLD, rate: 0.4 })
+        return walkMult(0.4)
+      },
+      v () { // reverse 1/64 — wild scramble + moonwalk
+        bend.repeat({ slice: clock.stepSeconds / 4, hold: KEY_HOLD, rate: -1, freeze: true })
+        return walkMult(-4)
+      },
+      o () { // 1/32 stutter
+        bend.repeat({ slice: clock.stepSeconds / 2, hold: KEY_HOLD, rate: 1, freeze: true })
+        return walkMult(2)
+      },
+      c () { // reverse tape
+        bend.reverse({ slice: clock.stepSeconds * 3, hold: KEY_HOLD, rate: 1 })
+        return walkMult(-1)
+      },
+      t () { // 1/16 beat-repeat
+        bend.repeat({ slice: clock.stepSeconds, hold: KEY_HOLD, rate: 1, freeze: true })
+        return walkMult(1)
+      },
+      e () { // soft reverse (slower)
+        bend.reverse({ slice: clock.stepSeconds * 4, hold: KEY_HOLD, rate: 0.75 })
+        return walkMult(-0.75)
+      }
+    }
+
+    function setKeyHit (letter, on) {
+      const el = document.querySelector('.key[data-key="' + letter + '"]')
+      if (el) el.classList.toggle('hit', on)
+    }
+
+    function pressKeyBreak (letter) {
+      if (!window.stage.started || !window.stage.playing) return
+      if (!bend || !clock) return
+      if (!KEY_BREAKS[letter]) return
+      if (keyHeld === letter) return
+      if (keyHeld) releaseKeyBreak()
+      keyHeld = letter
+      setKeyHit(letter, true)
+      const mult = KEY_BREAKS[letter]()
+      openReverb()
+      window.stage.holdGlitch && window.stage.holdGlitch(mult)
+    }
+
+    function releaseKeyBreak () {
+      if (!keyHeld) return
+      setKeyHit(keyHeld, false)
+      keyHeld = null
+      if (bend) bend.release()
+      closeReverb()
+      window.stage.releaseGlitch && window.stage.releaseGlitch()
+    }
+
+    addEventListener('keydown', (e) => {
+      if (e.repeat || e.metaKey || e.ctrlKey || e.altKey) return
+      if (e.code === 'Space' || e.key === ' ') {
+        e.preventDefault()
+        togglePlay()
+        return
+      }
+      const k = e.key.toLowerCase()
+      if (!KEY_BREAKS[k]) return
+      e.preventDefault()
+      pressKeyBreak(k)
+    })
+
+    addEventListener('keyup', (e) => {
+      const k = e.key.toLowerCase()
+      if (k === keyHeld) {
+        e.preventDefault()
+        releaseKeyBreak()
+      }
+    })
+
+    addEventListener('blur', () => releaseKeyBreak())
+
+    document.querySelectorAll('.key[data-key]').forEach((btn) => {
+      const letter = btn.dataset.key
+      btn.addEventListener('pointerdown', (e) => {
+        e.preventDefault()
+        btn.setPointerCapture(e.pointerId)
+        pressKeyBreak(letter)
+      })
+      btn.addEventListener('pointerup', () => releaseKeyBreak())
+      btn.addEventListener('pointercancel', () => releaseKeyBreak())
+      btn.addEventListener('lostpointercapture', () => releaseKeyBreak())
+    })
+
+    function drumHit (name, step, _ignored, time) {
+      const v = GROOVE[name][step]
+      if (!v) return
+
+      if (name === 'kick') {
+        kick.trigger(time, 0.85 + Math.random() * 0.15)
+      } else if (name === 'snare') {
+        snare.trigger(time, typeof v === 'number' && v < 1 ? 0.55 : 0.9)
+        if (v === 0.5) snare.trigger(time + 0.04, 0.4)
+      } else {
+        hat.trigger(time, 0.35 + v * 0.5, v >= 0.5)
+      }
+    }
+
+    const playBtn = document.getElementById('play')
+    let booting = false
+
+    function pausePerformance () {
+      if (!window.stage.started || !window.stage.playing) return
+      releaseKeyBreak()
+      if (clock) clock.stop()
+      window.stage.playing = false
+      if (peril.CONTEXT && peril.CONTEXT.state === 'running') {
+        peril.CONTEXT.suspend()
+      }
+    }
+
+    async function resumePerformance () {
+      if (!window.stage.started || window.stage.playing) return
+      if (peril.CONTEXT) await peril.CONTEXT.resume()
+      if (clock) clock.start()
+      window.stage.playing = true
+    }
+
+    async function togglePlay () {
+      if (booting) return
+      if (!window.stage.started) {
+        await startPerformance()
+        return
+      }
+      if (window.stage.playing) pausePerformance()
+      else await resumePerformance()
+    }
+
+    async function startPerformance () {
+      if (window.stage.started || booting) return
+      booting = true
+      playBtn.disabled = true
+      try {
+        await peril.init()
+        await peril.CONTEXT.resume()
+
+        master = new peril.Channel({ pan: 0, gain: 0.55 })
+        const mixBus = new peril.Channel({ pan: 0, gain: 0.72 })
+        const tape = new peril.Distortion({ drive: 0.05, style: 'soft', gain: 0.82 })
+        const delay = new peril.Delay({ time: 0.38, feedback: 0.28, wet: 0.16, dry: 1 })
+        reverb = new peril.Reverb({ dry: REVERB_DRY, wet: REVERB_WET })
+        filter = new peril.Filter({ type: 'lowpass', freq: WARMTH, Q: 0.55 })
+        const mud = new peril.Filter({ type: 'lowpass', freq: 5800, Q: 0.3 })
+
+        // Soft LFO -> filter (slow breathing warmth)
+        const lfo = new peril.Oscillator({ type: 0, freq: 0.08, gain: 1 })
+        const lfoDepth = peril.CONTEXT.createGain()
+        lfoDepth.gain.value = 280
+        lfo.output.connect(lfoDepth)
+        lfoDepth.connect(filter.freqParam)
+
+        // Vinyl / tape hiss bed
+        vinyl = new peril.Noise({ type: peril.NOISE.PINK, gain: HISS })
+        const hissFilter = new peril.Filter({ type: 'highpass', freq: 1200, Q: 0.4 })
+        vinyl.setOutput(hissFilter)
+
+        // Synth drums
+        drumsBus = new peril.Channel({ gain: 0.62 })
+        const drumTone = new peril.Filter({ type: 'lowpass', freq: 9000, Q: 0.4 })
+        kick = createKick()
+        snare = createSnare()
+        hat = createHat()
+        kick.output.setOutput(drumTone)
+        snare.output.setOutput(drumTone)
+        hat.output.setOutput(drumTone)
+        drumTone.setOutput(drumsBus)
+
+        // Funky bass (own filter, skips the warmth lowpass)
+        bass = createBass()
+
+        // Bend sits on the full mix at 100% (thru = dry, mangled = full wet)
+        bend = new peril.Bend({ bufferSeconds: 2.5, dry: 1, wet: 1 })
+
+        await reverb.load('./assets/ir/ir1.wav')
+
+        // Pad: detuned dual saw + slow per-voice sine FM (tape wash)
+        pad = new peril.Pad({
+          voices: 6,
+          build () {
+            // long, independent wow cycle per voice (~8–20s)
+            const washRate = 0.05 + Math.random() * 0.075
+            const mod = new peril.Oscillator({ type: 0, freq: washRate, gain: 1 })
+            const oscA = new peril.Oscillator({
+              type: 3, freq: 220, gain: 0, mod, modAmount: 4
+            })
+            const oscB = new peril.Oscillator({
+              type: 1, freq: 220, gain: 0, mod, modAmount: 5.5
+            })
+            const mix = new peril.Channel({ pan: 0, gain: 0 })
+            oscA.setOutput(mix)
+            oscB.setOutput(mix)
+            const env = new peril.ADSR(mix.gainParam, {
+              attack: 0.22,
+              decay: 0.5,
+              sustain: 0.5,
+              release: 1.6
+            })
+            return {
+              output: mix,
+              triggerAttack (freq, vel, time) {
+                const cents = 1.0035 // ~6 cents — warm detune
+                // scale FM depth with pitch so the wash stays ~subtle cents
+                const wash = Math.max(2.2, freq * 0.011)
+                oscA.node.parameters.get('modAmount').setValueAtTime(wash, time)
+                oscB.node.parameters.get('modAmount').setValueAtTime(wash * 1.3, time)
+                oscA.freqParam.setValueAtTime(freq, time)
+                oscB.freqParam.setValueAtTime(freq * cents, time)
+                oscA.gainParam.setValueAtTime(0.22, time)
+                oscB.gainParam.setValueAtTime(0.18, time)
+                env.triggerAttack(vel * 0.32, time)
+              },
+              triggerRelease (time) {
+                env.triggerRelease(time)
+              },
+              dispose () {
+                oscA.disconnect()
+                oscB.disconnect()
+                mod.disconnect()
+                mix.disconnect()
+              }
+            }
+          }
+        })
+
+        // Soft lead (sine + slight triangle) for melody twinkles
+        lead = new peril.Pad({
+          voices: 2,
+          build () {
+            const osc = new peril.Oscillator({ type: 0, freq: 440, gain: 0 })
+            const env = new peril.ADSR(osc.gainParam, {
+              attack: 0.01,
+              decay: 0.25,
+              sustain: 0.2,
+              release: 0.6
+            })
+            return {
+              output: osc,
+              triggerAttack (freq, vel, time) {
+                osc.freqParam.setValueAtTime(freq * 1.001, time)
+                env.triggerAttack(vel * 0.18, time)
+              },
+              triggerRelease (time) { env.triggerRelease(time) },
+              dispose () { osc.disconnect() }
+            }
+          }
+        })
+
+        // Everything → mixBus → Bend (100%) → FX → master
+        pad.setOutput(filter)
+        lead.setOutput(filter)
+        filter.setOutput(mixBus)
+        drumsBus.setOutput(mixBus)
+        bass.output.setOutput(mixBus)
+        hissFilter.setOutput(mixBus)
+        mixBus.setOutput(bend)
+        bend.setOutput(tape)
+        tape.setOutput(delay)
+        delay.setOutput(reverb)
+        reverb.setOutput(mud)
+        mud.setOutput(master)
+        master.output.connect(peril.CONTEXT.destination)
+
+        const always = Array(16).fill(1)
+        const kickSeq = new peril.Sequencer({
+          sequence: always,
+          callback (v, time, step) { drumHit('kick', step, v, time) }
+        })
+        const snareSeq = new peril.Sequencer({
+          sequence: always,
+          callback (v, time, step) { drumHit('snare', step, v, time) }
+        })
+        const hatSeq = new peril.Sequencer({
+          sequence: always,
+          callback (v, time, step) { drumHit('hat', step, v, time) }
+        })
+
+        let chordIdx = 0
+        const chordSeq = new peril.Sequencer({
+          sequence: [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+          callback (_v, time) {
+            const chord = CHORDS[PROGRESSION[chordIdx % PROGRESSION.length]]
+            bassRoot = chord[0] - 24
+            while (bassRoot > 41) bassRoot -= 12 // keep the bass in its low octave
+            playChord(chord, 0.72, time, 1.7)
+            chordIdx++
+          }
+        })
+
+        const bassSeq = new peril.Sequencer({
+          sequence: Array(16).fill(1),
+          callback (_v, time, step) { bassHit(step, time) }
+        })
+
+        const motif = [
+          ROOT + 15, 0, 0, ROOT + 17,
+          0, ROOT + 12, 0, 0,
+          ROOT + 19, 0, ROOT + 17, 0,
+          ROOT + 15, 0, 0, ROOT + 10
+        ]
+        const leadSeq = new peril.Sequencer({
+          sequence: motif,
+          callback (note, time) {
+            // gentle humanization: rare rests, octave sparkles, neighbor
+            // tones, loose timing and breathing velocity
+            if (Math.random() < 0.07) return
+            let n = note
+            const r = Math.random()
+            if (r < 0.05) n += 12
+            else if (r < 0.12) n += pick([2, -2, 5])
+            const t = time + (Math.random() - 0.5) * 0.014
+            lead.noteOn(n, 0.62 + Math.random() * 0.18, { when: t })
+            lead.noteOff(n, { when: t + 0.3 + Math.random() * 0.15 })
+          }
+        })
+
+        // Director rolls for tape mangling (Bend captures live drum buffer)
+        const director = new peril.Sequencer({
+          sequence: Array(16).fill(1),
+          callback (_v, time, step) {
+            if (keyHeld) return // never interrupt a held key break
+            if (step === 0) {
+              const roll = Math.random()
+              const breakP = CHAOS * 0.32
+              const repeatP = CHAOS * 0.4
+              if (roll < breakP) startBreak()
+              else if (roll < breakP + repeatP) startRepeat()
+            } else if (Math.random() < CHAOS * 0.045) {
+              startRepeat(pick([2, 3, 4]))
+            }
+          }
+        })
+
+        clock = new peril.Clock({
+          bpm: BPM,
+          subdivision: 4,
+          steps: 16,
+          sequences: [director, kickSeq, snareSeq, hatSeq, chordSeq, bassSeq, leadSeq]
+        })
+        clock.start()
+        window.stage.started = true
+        window.stage.playing = true
+        window.stage.bpm = clock.bpm
+
+        document.getElementById('overlay').classList.add('gone')
+        const keysEl = document.getElementById('keys')
+        keysEl.classList.add('show')
+        keysEl.setAttribute('aria-hidden', 'false')
+        // hold ADVOCATE word layout, then drift to QWERTY spots
+        setTimeout(() => keysEl.classList.remove('advocate'), 3000)
+      } catch (err) {
+        console.error(err)
+        playBtn.disabled = false
+      } finally {
+        booting = false
+      }
+    }
+
+    playBtn.onclick = () => { togglePlay() }
+  </script>
+
+  <script type="module">
+    import * as THREE from 'three'
+    import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js'
+    import { RenderPass } from 'three/addons/postprocessing/RenderPass.js'
+    import { GlitchPass } from 'three/addons/postprocessing/GlitchPass.js'
+    import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js'
+    import { OutputPass } from 'three/addons/postprocessing/OutputPass.js'
+    import { RGBShiftShader } from 'three/addons/shaders/RGBShiftShader.js'
+
+    // ---------- Scene ----------
+    // Valia sky blue (held) — floor blends through fog
+    const SKY = 0x9ec9e8
+    const scene = new THREE.Scene()
+    scene.background = new THREE.Color(SKY)
+    // soft haze so the far floor melts into the sky
+    scene.fog = new THREE.Fog(SKY, 10, 52)
+
+    const camera = new THREE.PerspectiveCamera(45, innerWidth / innerHeight, 0.1, 100)
+    camera.position.set(-5.5, 11, 20)
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true })
+    renderer.setSize(innerWidth, innerHeight)
+    renderer.setPixelRatio(Math.min(devicePixelRatio, 2))
+    renderer.shadowMap.enabled = true
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap
+    document.body.appendChild(renderer.domElement)
+
+    // ---------- Post-processing (glitch FX during breaks) ----------
+    const composer = new EffectComposer(renderer)
+    composer.addPass(new RenderPass(scene, camera))
+
+    const glitchPass = new GlitchPass()
+    glitchPass.enabled = false
+    composer.addPass(glitchPass)
+
+    const rgbPass = new ShaderPass(RGBShiftShader)
+    rgbPass.uniforms.amount.value = 0
+    rgbPass.enabled = false
+    composer.addPass(rgbPass)
+
+    composer.addPass(new OutputPass())
+
+    let fxActive = false
+
+    const hemi = new THREE.HemisphereLight(0xeaf5fc, 0xd4a3b3, 1.0)
+    scene.add(hemi)
+    const sun = new THREE.DirectionalLight(0xffe8d0, 1.6)
+    sun.position.set(5, 9, 5)
+    sun.castShadow = true
+    sun.shadow.mapSize.set(2048, 2048)
+    sun.shadow.camera.left = -8
+    sun.shadow.camera.right = 8
+    sun.shadow.camera.top = 8
+    sun.shadow.camera.bottom = -8
+    scene.add(sun)
+
+    // ---------- Treadmill ground ----------
+    const groundCanvas = document.createElement('canvas')
+    groundCanvas.width = groundCanvas.height = 256
+    const gctx = groundCanvas.getContext('2d')
+    // pink floor — fog washes it into the sky toward the horizon
+    gctx.fillStyle = '#f3c9d6'
+    gctx.fillRect(0, 0, 256, 256)
+    gctx.fillStyle = 'rgba(255,255,255,0.2)'
+    for (let i = 0; i < 26; i++) {
+      gctx.beginPath()
+      gctx.arc(Math.random() * 256, Math.random() * 256, 2 + Math.random() * 3, 0, Math.PI * 2)
+      gctx.fill()
+    }
+    const groundTex = new THREE.CanvasTexture(groundCanvas)
+    groundTex.wrapS = groundTex.wrapT = THREE.RepeatWrapping
+    groundTex.repeat.set(108, 108)
+    const groundMat = new THREE.MeshToonMaterial({ map: groundTex, color: 0xffffff })
+    const ground = new THREE.Mesh(
+      new THREE.PlaneGeometry(300, 300),
+      groundMat
+    )
+    ground.rotation.x = -Math.PI / 2
+    ground.receiveShadow = true
+    scene.add(ground)
+
+    // ---------- Helpers ----------
+    const toon = (color) => new THREE.MeshToonMaterial({ color })
+
+    function mesh (geo, mat, x = 0, y = 0, z = 0) {
+      const m = new THREE.Mesh(geo, mat)
+      m.position.set(x, y, z)
+      m.castShadow = true
+      return m
+    }
+
+    function pivot (x, y, z) {
+      const g = new THREE.Group()
+      g.position.set(x, y, z)
+      return g
+    }
+
+    function eyePair (parent, sep, y, z, r = 0.09, browColor = null) {
+      const eyeMat = toon(0x1c1c1c)
+      const hiMat = toon(0xffffff)
+      for (const s of [-1, 1]) {
+        const eye = mesh(new THREE.SphereGeometry(r, 16, 16), eyeMat, s * sep, y, z)
+        const hi = mesh(new THREE.SphereGeometry(r * 0.35, 8, 8), hiMat, r * 0.3, r * 0.3, r * 0.75)
+        eye.add(hi)
+        parent.add(eye)
+        if (browColor) {
+          const brow = mesh(
+            new THREE.BoxGeometry(r * 2.4, r * 0.5, r * 0.4),
+            toon(browColor),
+            s * sep, y + r * 2.4, z
+          )
+          brow.rotation.z = -s * 0.18
+          parent.add(brow)
+        }
+      }
+    }
+
+    function smile (parent, y, z, w = 0.3, open = true) {
+      const mouth = mesh(new THREE.SphereGeometry(w, 20, 20), toon(0x5b1f1f), 0, y, z)
+      mouth.scale.set(1, 0.62, 0.35)
+      parent.add(mouth)
+      if (open) {
+        const tongue = mesh(new THREE.SphereGeometry(w * 0.55, 16, 16), toon(0xe06a6a), 0, y - w * 0.28, z + w * 0.18)
+        tongue.scale.set(1, 0.5, 0.4)
+        parent.add(tongue)
+      }
+    }
+
+    function suitFront (parent, y, z, shirt, tie, lapel) {
+      // shirt V (apex down)
+      const v = mesh(new THREE.ConeGeometry(0.28, 0.46, 3), toon(shirt), 0, y, z)
+      v.rotation.x = Math.PI
+      v.scale.z = 0.2
+      parent.add(v)
+      // collar flaps
+      for (const s of [-1, 1]) {
+        const c = mesh(new THREE.ConeGeometry(0.11, 0.2, 3), toon(shirt), s * 0.15, y + 0.2, z + 0.03)
+        c.rotation.x = Math.PI
+        c.rotation.z = s * 0.55
+        c.scale.z = 0.25
+        parent.add(c)
+      }
+      // tie
+      const knot = mesh(new THREE.BoxGeometry(0.11, 0.1, 0.05), toon(tie), 0, y + 0.17, z + 0.05)
+      parent.add(knot)
+      const blade = mesh(new THREE.ConeGeometry(0.09, 0.5, 4), toon(tie), 0, y - 0.12, z + 0.04)
+      blade.rotation.y = Math.PI / 4
+      blade.scale.z = 0.35
+      parent.add(blade)
+      // lapels — converge downward like a coat opening
+      for (const s of [-1, 1]) {
+        const l = mesh(new THREE.BoxGeometry(0.15, 0.55, 0.05), toon(lapel), s * 0.28, y - 0.02, z + 0.01)
+        l.rotation.z = -s * 0.32
+        parent.add(l)
+      }
+    }
+
+    // ---------- Advocado (avocado in a green suit) ----------
+    function buildAdvocado () {
+      const g = new THREE.Group()
+      const FLESH = 0xc9d96e
+      const SUIT = 0x4a7c3f
+      const SUIT_DARK = 0x3a6331
+      const GLOVE = 0x3f6634
+
+      // body — egg
+      const body = mesh(new THREE.SphereGeometry(1, 32, 32), toon(FLESH), 0, 1.45, 0)
+      body.scale.set(0.82, 1.15, 0.72)
+      g.add(body)
+
+      // dark skin sliver behind
+      const skin = mesh(new THREE.SphereGeometry(1.0, 32, 32), toon(0x557a37), 0, 1.45, -0.18)
+      skin.scale.set(0.8, 1.13, 0.6)
+      g.add(skin)
+
+      // jacket — spherical shell hugging the egg (round neck at chest height)
+      const jacketMat = new THREE.MeshToonMaterial({ color: SUIT, side: THREE.DoubleSide })
+      const jacket = new THREE.Mesh(
+        new THREE.SphereGeometry(1.04, 32, 24, 0, Math.PI * 2, Math.PI * 0.47, Math.PI * 0.53),
+        jacketMat
+      )
+      jacket.position.set(0, 1.45, 0)
+      jacket.scale.set(0.85, 1.19, 0.75)
+      jacket.castShadow = true
+      g.add(jacket)
+
+      suitFront(g, 1.36, 0.78, 0xf3d878, 0x7a4a22, SUIT_DARK)
+
+      // face
+      eyePair(g, 0.3, 1.98, 0.68, 0.1, 0x6b5322)
+      smile(g, 1.72, 0.73, 0.19, true)
+      for (const s of [-1, 1]) {
+        const blush = mesh(new THREE.CircleGeometry(0.09, 16), new THREE.MeshBasicMaterial({ color: 0xdf9a86 }), s * 0.52, 1.74, 0.68)
+        blush.rotation.y = s * 0.35
+        g.add(blush)
+      }
+
+      // arms
+      const arms = []
+      for (const s of [-1, 1]) {
+        const p = pivot(s * 0.78, 1.35, 0)
+        const arm = mesh(new THREE.CapsuleGeometry(0.13, 0.5, 6, 12), toon(SUIT), 0, -0.32, 0)
+        p.add(arm)
+        const hand = mesh(new THREE.SphereGeometry(0.17, 14, 14), toon(GLOVE), 0, -0.68, 0)
+        p.add(hand)
+        p.rotation.z = s * 0.22
+        g.add(p)
+        arms.push(p)
+      }
+
+      // legs
+      const legs = []
+      for (const s of [-1, 1]) {
+        const p = pivot(s * 0.3, 0.42, 0)
+        const leg = mesh(new THREE.CylinderGeometry(0.13, 0.12, 0.42, 12), toon(0x3c5c30), 0, -0.2, 0)
+        p.add(leg)
+        const boot = mesh(new THREE.SphereGeometry(0.17, 14, 14), toon(0x2f4d26), 0, -0.42, 0.06)
+        boot.scale.set(1, 0.7, 1.35)
+        p.add(boot)
+        g.add(p)
+        legs.push(p)
+      }
+
+      return { group: g, arms, legs, head: null, tail: null }
+    }
+
+    // ---------- Advocat (white cat in a navy suit) ----------
+    function buildAdvocat () {
+      const g = new THREE.Group()
+      const FUR = 0xf5f0e6
+      const SUIT = 0x2c3a56
+      const SUIT_DARK = 0x22304a
+
+      // legs / pants
+      const legs = []
+      for (const s of [-1, 1]) {
+        const p = pivot(s * 0.26, 0.62, 0)
+        const leg = mesh(new THREE.CylinderGeometry(0.14, 0.13, 0.6, 12), toon(SUIT), 0, -0.3, 0)
+        p.add(leg)
+        const foot = mesh(new THREE.SphereGeometry(0.16, 14, 14), toon(FUR), 0, -0.6, 0.07)
+        foot.scale.set(1, 0.65, 1.4)
+        p.add(foot)
+        g.add(p)
+        legs.push(p)
+      }
+
+      // torso — suit
+      const torso = mesh(new THREE.CapsuleGeometry(0.5, 0.6, 8, 20), toon(SUIT), 0, 1.15, 0)
+      torso.scale.set(1, 1, 0.82)
+      g.add(torso)
+      suitFront(g, 1.42, 0.5, 0xffffff, 0xc0392b, SUIT_DARK)
+
+      // head
+      const headPivot = pivot(0, 1.78, 0)
+      const head = mesh(new THREE.SphereGeometry(0.58, 32, 32), toon(FUR), 0, 0.3, 0)
+      head.scale.set(1.05, 0.95, 0.9)
+      headPivot.add(head)
+
+      // ears
+      for (const s of [-1, 1]) {
+        const ear = mesh(new THREE.ConeGeometry(0.2, 0.38, 4), toon(FUR), s * 0.38, 0.82, 0)
+        ear.rotation.z = -s * 0.35
+        headPivot.add(ear)
+        const inner = mesh(new THREE.ConeGeometry(0.11, 0.22, 4), toon(0xe8a7a0), s * 0.37, 0.78, 0.14)
+        inner.rotation.z = -s * 0.35
+        headPivot.add(inner)
+      }
+
+      // face
+      eyePair(headPivot, 0.24, 0.38, 0.55, 0.09, 0x333333)
+      const nose = mesh(new THREE.ConeGeometry(0.05, 0.05, 3), toon(0x2b2b2b), 0, 0.22, 0.58)
+      nose.rotation.x = Math.PI
+      headPivot.add(nose)
+      smile(headPivot, 0.1, 0.55, 0.17, true)
+
+      // whiskers
+      const whiskerMat = toon(0x555555)
+      for (const s of [-1, 1]) {
+        for (let i = 0; i < 3; i++) {
+          const w = mesh(new THREE.CylinderGeometry(0.006, 0.006, 0.42, 4), whiskerMat, s * 0.55, 0.2 + i * 0.07, 0.46)
+          w.rotation.z = s * (Math.PI / 2 - 0.12 + i * 0.12)
+          headPivot.add(w)
+        }
+      }
+      g.add(headPivot)
+
+      // arms
+      const arms = []
+      for (const s of [-1, 1]) {
+        const p = pivot(s * 0.56, 1.42, 0)
+        const arm = mesh(new THREE.CapsuleGeometry(0.12, 0.46, 6, 12), toon(SUIT), 0, -0.3, 0)
+        p.add(arm)
+        const paw = mesh(new THREE.SphereGeometry(0.15, 14, 14), toon(FUR), 0, -0.62, 0)
+        p.add(paw)
+        p.rotation.z = s * 0.18
+        g.add(p)
+        arms.push(p)
+      }
+
+      // tail
+      const tailPivot = pivot(0, 0.75, -0.42)
+      const tailCurve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(0, 0, 0),
+        new THREE.Vector3(0.25, -0.15, -0.3),
+        new THREE.Vector3(0.55, 0.1, -0.45),
+        new THREE.Vector3(0.7, 0.5, -0.4)
+      ])
+      const tail = mesh(new THREE.TubeGeometry(tailCurve, 20, 0.075, 10), toon(FUR))
+      tailPivot.add(tail)
+      const tailTip = mesh(new THREE.SphereGeometry(0.09, 10, 10), toon(FUR), 0.7, 0.5, -0.4)
+      tailPivot.add(tailTip)
+      g.add(tailPivot)
+
+      return { group: g, arms, legs, head: headPivot, tail: tailPivot }
+    }
+
+    // ---------- Assemble ----------
+    const advocado = buildAdvocado()
+    advocado.group.position.x = -1.15
+    scene.add(advocado.group)
+
+    const advocat = buildAdvocat()
+    advocat.group.position.x = 1.15
+    scene.add(advocat.group)
+
+    // ---------- Camera director ----------
+    // Home framing (the default angle/zoom). On a Bend break/repeat we cut to a
+    // random shot, then ease back home when the glitch hold time expires.
+    const vec = (x, y, z) => new THREE.Vector3(x, y, z)
+    const HOME = { pos: vec(-5.5, 11, 20), look: vec(0.4, 1.0, 0), fov: 45 }
+    const SHOTS = [
+      { pos: vec(2.2, 1.0, 5.6), look: vec(0, 1.4, 0), fov: 40 },     // low front close
+      { pos: vec(7.5, 1.8, 3.0), look: vec(0, 1.2, 0), fov: 42 },     // right side dolly
+      { pos: vec(-7.0, 1.5, 4.0), look: vec(0, 1.3, 0), fov: 42 },    // left side dolly
+      { pos: vec(0.4, 12.5, 2.5), look: vec(0, 0.8, 0), fov: 50 },    // overhead
+      { pos: vec(2.6, 2.3, 3.2), look: vec(1.15, 1.7, 0), fov: 34 },  // Advocat closeup
+      { pos: vec(-2.8, 2.1, 3.0), look: vec(-1.15, 1.5, 0), fov: 34 },// Advocado closeup
+      { pos: vec(-1.5, 4.5, 26), look: vec(0, 1.2, 0), fov: 26 }      // long-lens pullback
+    ]
+
+    const camDest = { pos: HOME.pos.clone(), look: HOME.look.clone(), fov: HOME.fov, speed: 0.06 }
+    const lookCurrent = HOME.look.clone()
+    let fovCurrent = HOME.fov
+    let lastShot = -1
+    let camTimer = null
+
+    function beginGlitchFx (walkMult = 1) {
+      window.stage.walkMult = walkMult
+      fxActive = true
+      glitchPass.enabled = true
+      glitchPass.goWild = Math.abs(walkMult) >= 2 || walkMult < 0
+      rgbPass.enabled = true
+
+      let idx
+      do { idx = (Math.random() * SHOTS.length) | 0 } while (idx === lastShot)
+      lastShot = idx
+      const shot = SHOTS[idx]
+      camDest.pos.copy(shot.pos)
+      camDest.look.copy(shot.look)
+      camDest.fov = shot.fov
+      camDest.speed = 0.28
+    }
+
+    function endGlitchFx () {
+      if (camTimer) { clearTimeout(camTimer); camTimer = null }
+      camDest.pos.copy(HOME.pos)
+      camDest.look.copy(HOME.look)
+      camDest.fov = HOME.fov
+      camDest.speed = 0.05
+      lastShot = -1
+      window.stage.walkMult = 1
+      fxActive = false
+      glitchPass.enabled = false
+      glitchPass.goWild = false
+      rgbPass.enabled = false
+      rgbPass.uniforms.amount.value = 0
+    }
+
+    function glitchCamera (holdSec, walkMult = 1) {
+      if (camTimer) clearTimeout(camTimer)
+      beginGlitchFx(walkMult)
+      camTimer = setTimeout(endGlitchFx, Math.max(180, holdSec * 1000))
+    }
+
+    window.stage.glitch = glitchCamera
+    window.stage.holdGlitch = (mult) => {
+      if (camTimer) { clearTimeout(camTimer); camTimer = null }
+      beginGlitchFx(mult)
+    }
+    window.stage.releaseGlitch = () => endGlitchFx()
+
+    // ---------- Walk cycle ----------
+    const tclock = new THREE.Clock()
+    let phase = 0
+
+    function walkPose (char, ph, opts = {}) {
+      const swing = Math.sin(ph)
+      const swing2 = Math.sin(ph * 2)
+      const legAmp = opts.legAmp || 0.55
+      const armAmp = opts.armAmp || 0.45
+
+      // dance layer: half-time groove riding on top of the walk
+      const groove = Math.sin(ph * 0.5)
+      const grooveOff = Math.sin(ph * 0.5 + Math.PI / 3)
+      const grooveAmp = opts.grooveAmp || 1
+      const armRest = opts.armRest || 0.2
+
+      char.legs[0].rotation.x = swing * legAmp
+      char.legs[1].rotation.x = -swing * legAmp
+      char.arms[0].rotation.x = -swing * armAmp
+      char.arms[1].rotation.x = swing * armAmp
+
+      // alternating arm flare — a little elbow-out groove on each side
+      char.arms[0].rotation.z = -(armRest + Math.max(0, groove) * 0.4 * grooveAmp)
+      char.arms[1].rotation.z = armRest + Math.max(0, -groove) * 0.4 * grooveAmp
+
+      // bob + sway, plus a double-time bounce and slow lean/twist from the groove
+      char.group.position.y = Math.abs(swing) * 0.07 + Math.abs(swing2) * 0.02 * grooveAmp
+      char.group.rotation.z = swing * 0.035 + groove * 0.06 * grooveAmp
+      char.group.rotation.y = swing * 0.045 + grooveOff * 0.09 * grooveAmp
+
+      if (char.head) {
+        // head nod + tilt riding the groove
+        char.head.rotation.z = swing * 0.06 + groove * 0.12
+        char.head.rotation.x = swing2 * 0.02 - Math.abs(groove) * 0.08
+      }
+      if (char.tail) {
+        char.tail.rotation.y = Math.sin(ph * 0.7) * 0.5
+        char.tail.rotation.x = Math.sin(ph * 1.3) * 0.15
+      }
+    }
+
+    function animate () {
+      requestAnimationFrame(animate)
+      const dt = Math.min(tclock.getDelta(), 0.1)
+      const stage = window.stage
+
+      // standing still until Play is pressed, then walking at the music's pace;
+      // bend glitches scale it (stutter scurry, slow-mo, or backwards)
+      const pace = (stage.started && stage.playing ? stage.bpm / 84 : 0) * stage.walkMult
+      phase += dt * 4.6 * pace
+
+      // Advocado grooves with his whole body (no separate head); the cat keeps
+      // it cooler in the body but nods along
+      walkPose(advocado, phase, { legAmp: 0.5, armAmp: 0.4, armRest: 0.22, grooveAmp: 1.3 })
+      walkPose(advocat, phase + 1.84, { legAmp: 0.6, armAmp: 0.5, armRest: 0.18, grooveAmp: 0.9 })
+
+      // treadmill toward camera — they stroll forward together
+      groundTex.offset.y += dt * 0.55 * pace
+
+      // camera tween toward its current destination
+      camera.position.lerp(camDest.pos, camDest.speed)
+      lookCurrent.lerp(camDest.look, camDest.speed)
+      fovCurrent += (camDest.fov - fovCurrent) * camDest.speed
+      camera.fov = fovCurrent
+      camera.updateProjectionMatrix()
+      camera.lookAt(lookCurrent)
+
+      if (fxActive) {
+        // flickering chromatic aberration + handheld shake + roll jitter
+        rgbPass.uniforms.amount.value = 0.0015 + Math.random() * 0.005
+        rgbPass.uniforms.angle.value = Math.random() * Math.PI * 2
+        camera.position.x += (Math.random() - 0.5) * 0.06
+        camera.position.y += (Math.random() - 0.5) * 0.06
+        camera.rotation.z += (Math.random() - 0.5) * 0.02
+      }
+
+      composer.render()
+    }
+    animate()
+
+    addEventListener('resize', () => {
+      camera.aspect = innerWidth / innerHeight
+      camera.updateProjectionMatrix()
+      renderer.setSize(innerWidth, innerHeight)
+      composer.setSize(innerWidth, innerHeight)
+    })
+  </script>
+</body>
+</html>
