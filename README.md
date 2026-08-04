@@ -7,11 +7,16 @@ Web Audio / Three.js scenes.
 | Scene | Path |
 |-------|------|
 | Scene 1 — summer ’98 walk | [`scene1/`](./scene1/) |
+| Scene 2 — levitation / nardis | [`scene2/`](./scene2/) |
+
+## Live
+
+https://minnam.github.io/web-audio-playground/
 
 ## Local preview
 
 ```bash
-npx http-server scene1 -p 8888 -c-1
+npx http-server . -p 8888 -c-1
 ```
 
 Then open http://localhost:8888
