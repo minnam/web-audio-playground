@@ -552,7 +552,7 @@
       if (!('speechSynthesis' in window)) return
       const u = new SpeechSynthesisUtterance(digit)
       u.lang = 'en-US'
-      u.volume = 0.35 // sit under the music instead of on top of it
+      u.volume = 0.5 // sit under the music instead of on top of it
       u.rate = 0.95
       u.pitch = 1.65 + Math.random() * 0.25 // high / chipmunk-ish
       speechSynthesis.cancel() // retrigger instantly instead of queueing
