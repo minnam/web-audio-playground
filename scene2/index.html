@@ -39,7 +39,7 @@
       height: 140px;
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.9s ease;
+      transition: opacity 0.8s ease 0.3s;
       --ku: 44px; /* key unit — keyboard pitch */
     }
     #keys.show { opacity: 1; pointer-events: auto; }
@@ -66,11 +66,18 @@
       touch-action: none;
       user-select: none;
     }
-    /* Parked/bunched — keys fade in as they fan to keyboard spots */
-    #keys.park .key {
-      left: calc(var(--si) * 48px + 42px);
+    /* Spelled 1696 first; then fan to keyboard spots (extra 6 is a dummy that fades) */
+    #keys.spell .key[data-say],
+    #keys.spell .key-dummy {
+      left: calc(var(--si) * 54px + 107px);
       top: 48px;
     }
+    #keys.spell .key[data-dir] {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .key-dummy { pointer-events: none; cursor: default; }
+    #keys:not(.spell) .key-dummy { opacity: 0; }
     .key:hover { color: rgba(230, 238, 255, 0.85); }
     .key:active, .key.hit {
       color: #fff;
@@ -91,15 +98,16 @@
     <button id="play" aria-label="Play"></button>
   </div>
 
-  <div id="keys" class="park" aria-hidden="true">
-    <!-- digits: number-row spots / arrows: inverted-T like a real keyboard -->
+  <div id="keys" class="spell" aria-hidden="true">
+    <!-- 1696 spelled first; dummy 6 fades into the real 6's number-row slot -->
     <button class="key" data-say="1" style="--si:0;--c:0;--r:0" aria-label="Speak 1 — zoom Advocado">1</button>
     <button class="key" data-say="6" style="--si:1;--c:5;--r:0" aria-label="Speak 6 — zoom Advocat">6</button>
     <button class="key" data-say="9" style="--si:2;--c:8;--r:0" aria-label="Speak 9 — zoom both">9</button>
-    <button class="key" data-dir="up" style="--si:3;--c:7;--r:1" aria-label="Angle up — random fill">↑</button>
-    <button class="key" data-dir="left" style="--si:4;--c:6;--r:2" aria-label="Angle left — random fill">←</button>
-    <button class="key" data-dir="down" style="--si:5;--c:7;--r:2" aria-label="Angle down — random fill">↓</button>
-    <button class="key" data-dir="right" style="--si:6;--c:8;--r:2" aria-label="Angle right — random fill">→</button>
+    <button class="key key-dummy" style="--si:3;--c:5;--r:0" tabindex="-1" aria-hidden="true">6</button>
+    <button class="key" data-dir="up" style="--si:4;--c:7;--r:1" aria-label="Angle up — random fill">↑</button>
+    <button class="key" data-dir="left" style="--si:5;--c:6;--r:2" aria-label="Angle left — random fill">←</button>
+    <button class="key" data-dir="down" style="--si:6;--c:7;--r:2" aria-label="Angle down — random fill">↓</button>
+    <button class="key" data-dir="right" style="--si:7;--c:8;--r:2" aria-label="Angle right — random fill">→</button>
   </div>
 
   <script src="./peril.js"></script>
@@ -919,16 +927,10 @@
         window.stage.bpm = clock.bpm
 
         document.getElementById('overlay').classList.add('gone')
-        // stay hidden until the fan-to-keyboard animation begins
-        setTimeout(() => {
-          requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-              keysEl.classList.add('show')
-              keysEl.classList.remove('park')
-              keysEl.setAttribute('aria-hidden', 'false')
-            })
-          })
-        }, 600)
+        keysEl.classList.add('show')
+        keysEl.setAttribute('aria-hidden', 'false')
+        // hold the 1696 title, then fan to keyboard spots (dummy 6 fades)
+        setTimeout(() => keysEl.classList.remove('spell'), 3000)
       } catch (err) {
         console.error(err)
         playBtn.disabled = false
@@ -953,7 +955,7 @@
     scene.fog = new THREE.Fog(0x05060e, 14, 46)
 
     const camera = new THREE.PerspectiveCamera(42, innerWidth / innerHeight, 0.1, 200)
-    camera.position.set(0, 3.2, 10)
+    camera.position.set(6.46, 11.636, 13.096)
 
     const renderer = new THREE.WebGLRenderer({ antialias: true })
     renderer.setSize(innerWidth, innerHeight)
@@ -1322,10 +1324,13 @@
     duo.add(glowB)
 
     // ---------- Camera director ----------
-    // Wide formation home shot; hold 1 / 6 / 9 to dig into advocado / advocat / both.
-    // Snare ratchets shuffle yaw / elev / distance around the look target.
-    const camPos = new THREE.Vector3(0, 3.6, 13.5)
-    const camLook = new THREE.Vector3(0, 2.0, 0)
+    // Default: medium front-left home frame (the formation portrait shot).
+    // Hold 1 / 6 / 9 to dig into advocado / advocat / both.
+    // Snare ratchets / arrows shuffle yaw / elev / distance around the look target.
+    const HOME_POS = new THREE.Vector3(6.46, 11.636, 13.096)
+    const HOME_LOOK = new THREE.Vector3(0.15, 2.1, 0)
+    const camPos = HOME_POS.clone()
+    const camLook = HOME_LOOK.clone()
     const camWantPos = new THREE.Vector3()
     const camWantLook = new THREE.Vector3()
     const faceA = new THREE.Vector3()
@@ -1333,6 +1338,9 @@
     let yawSmooth = 0
     let elevSmooth = 0
     let distSmooth = 0
+
+    camera.position.copy(camPos)
+    camera.lookAt(camLook)
 
     function applyViewNudge (pos, look, yaw, elev, dist) {
       // pull along the camera→look axis first (dolly), then orbit yaw, then lift
@@ -1433,9 +1441,9 @@
       if (dh < -0.5) dh += 1
       hueSmooth = (hueSmooth + dh * dt * 2 + 1) % 1
 
-      // yawed a touch toward the camera so the faces read (nyan-style)
-      levitate(advocado, flyT, { height: 1.3, bobSpeed: 0.9, phase: 0, face: Math.PI / 2 - 0.38, lean: -0.32, boost: boostSmooth })
-      levitate(advocat, flyT, { height: 1.9, bobSpeed: 0.9, phase: Math.PI * 0.7, face: Math.PI / 2 - 0.38, lean: -0.32, boost: boostSmooth })
+      // yawed toward the camera so faces read in the home portrait frame
+      levitate(advocado, flyT, { height: 1.3, bobSpeed: 0.9, phase: 0, face: Math.PI / 2 - 0.55, lean: -0.22, boost: boostSmooth })
+      levitate(advocat, flyT, { height: 1.9, bobSpeed: 0.9, phase: Math.PI * 0.7, face: Math.PI / 2 - 0.55, lean: -0.22, boost: boostSmooth })
 
       updateTrail(trailA, flyT, advocado.group.position.y, boostSmooth)
       updateTrail(trailB, flyT, advocat.group.position.y, boostSmooth)
