@@ -7,7 +7,7 @@ Web Audio / Three.js scenes.
 | Scene | Path |
 |-------|------|
 | Scene 1 — summer ’98 walk | [`scene1/`](./scene1/) |
-| Scene 2 — levitation / nardis | [`scene2/`](./scene2/) |
+| Scene 2 — 1696 | [`scene2/`](./scene2/) |
 
 ## Live
 

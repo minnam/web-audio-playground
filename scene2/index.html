@@ -2,14 +2,14 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Peril — scene 2: levitation</title>
+  <title>Peril — scene 2: 1696</title>
   <style>
-    html, body { margin: 0; height: 100%; overflow: hidden; background: #05060e; }
+    html, body { margin: 0; height: 100%; overflow: hidden; background: #f4a7c0; }
 
     #overlay {
       position: fixed; inset: 0; z-index: 10;
       display: flex; align-items: center; justify-content: center;
-      background: rgba(5, 6, 14, 0.55);
+      background: rgba(244, 167, 192, 0.5);
       backdrop-filter: blur(5px);
       transition: opacity 0.9s ease;
     }
@@ -19,11 +19,11 @@
       padding: 0;
       border-radius: 50%;
       border: none;
-      background: #e8ecff;
+      background: #fff5f8;
       cursor: pointer;
       -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'%3E%3Cpath fill-rule='evenodd' d='M48 0a48 48 0 1 1 0 96 48 48 0 0 1 0-96zm-10 28l36 20-36 20V28z'/%3E%3C/svg%3E") center / 100% 100%;
       mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'%3E%3Cpath fill-rule='evenodd' d='M48 0a48 48 0 1 1 0 96 48 48 0 0 1 0-96zm-10 28l36 20-36 20V28z'/%3E%3C/svg%3E") center / 100% 100%;
-      filter: drop-shadow(0 0 24px rgba(150, 180, 255, 0.5));
+      filter: drop-shadow(0 12px 24px rgba(120, 40, 70, 0.28));
       transition: transform 0.15s ease, background 0.15s ease;
     }
     #play:hover { transform: scale(1.07); background: #ffffff; }
@@ -36,49 +36,45 @@
       transform: translateX(-50%);
       z-index: 5;
       width: 420px;
-      height: 140px;
+      height: 64px;
       opacity: 0;
       pointer-events: none;
       transition: opacity 0.8s ease 0.3s;
-      --ku: 44px; /* key unit — keyboard pitch */
+      --ku: 44px;
     }
     #keys.show { opacity: 1; pointer-events: auto; }
     .key {
       position: absolute;
-      width: 44px; height: 44px;
+      width: 48px; height: 48px;
       left: calc(var(--c) * var(--ku));
-      top: calc(var(--r) * var(--ku));
+      top: 8px;
       padding: 0;
       border: 1.5px solid currentColor;
-      border-radius: 9px;
+      border-radius: 10px;
       background: transparent;
       cursor: pointer;
-      color: rgba(190, 205, 255, 0.5);
+      color: rgba(255, 255, 255, 0.55);
       font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
-      font-size: 17px;
-      line-height: 1;
+      font-size: 18px;
+      line-height: 48px;
+      text-align: center;
       transition:
         color 0.12s ease,
         transform 0.12s ease,
         opacity 1.35s cubic-bezier(0.4, 0, 0.2, 1),
-        left 1.35s cubic-bezier(0.4, 0, 0.2, 1),
-        top 1.35s cubic-bezier(0.4, 0, 0.2, 1);
+        left 1.35s cubic-bezier(0.4, 0, 0.2, 1);
       touch-action: none;
       user-select: none;
     }
-    /* Spelled 1696 first; then fan to keyboard spots (extra 6 is a dummy that fades) */
+    /* Spelled 1696 first; then fan to number-row slots (dummy 6 fades) */
     #keys.spell .key[data-say],
     #keys.spell .key-dummy {
-      left: calc(var(--si) * 54px + 107px);
-      top: 48px;
-    }
-    #keys.spell .key[data-dir] {
-      opacity: 0;
-      pointer-events: none;
+      left: calc(var(--si) * 54px + 32px);
+      top: 8px;
     }
     .key-dummy { pointer-events: none; cursor: default; }
     #keys:not(.spell) .key-dummy { opacity: 0; }
-    .key:hover { color: rgba(230, 238, 255, 0.85); }
+    .key:hover { color: rgba(255, 255, 255, 0.85); }
     .key:active, .key.hit {
       color: #fff;
       transform: translateY(1px) scale(0.94);
@@ -99,72 +95,80 @@
   </div>
 
   <div id="keys" class="spell" aria-hidden="true">
-    <!-- 1696 spelled first; dummy 6 fades into the real 6's number-row slot -->
-    <button class="key" data-say="1" style="--si:0;--c:0;--r:0" aria-label="Speak 1 — zoom Advocado">1</button>
-    <button class="key" data-say="6" style="--si:1;--c:5;--r:0" aria-label="Speak 6 — zoom Advocat">6</button>
-    <button class="key" data-say="9" style="--si:2;--c:8;--r:0" aria-label="Speak 9 — zoom both">9</button>
-    <button class="key key-dummy" style="--si:3;--c:5;--r:0" tabindex="-1" aria-hidden="true">6</button>
-    <button class="key" data-dir="up" style="--si:4;--c:7;--r:1" aria-label="Angle up — random fill">↑</button>
-    <button class="key" data-dir="left" style="--si:5;--c:6;--r:2" aria-label="Angle left — random fill">←</button>
-    <button class="key" data-dir="down" style="--si:6;--c:7;--r:2" aria-label="Angle down — random fill">↓</button>
-    <button class="key" data-dir="right" style="--si:7;--c:8;--r:2" aria-label="Angle right — random fill">→</button>
+    <!-- 1696 spelled first; dummy 6 fades into the real 6 slot -->
+    <button class="key" data-say="1" style="--si:0;--c:0" aria-label="1 — lowpass all tracks">1</button>
+    <button class="key" data-say="6" style="--si:1;--c:5" aria-label="6 — solo melody + reverb">6</button>
+    <button class="key" data-say="9" style="--si:2;--c:8" aria-label="9 — random stutter">9</button>
+    <button class="key key-dummy" style="--si:3;--c:5" tabindex="-1" aria-hidden="true">6</button>
   </div>
-
   <script src="./peril.js"></script>
   <script>
-    // Bridge between the audio engine (this script) and the 3D stage (module below).
     window.stage = {
       started: false,
       playing: false,
       bpm: 84,
-      pulse: 0,   // 0..1, kicked to 1 on each kick drum hit, decays in the render loop
-      snap: 0,    // 0..1, snare accent
-      hue: 4 / 12, // rainbow base hue follows the chord root (pitch class / 12)
-      focus: null, // null | 'advocado' | 'advocat' | 'both' — hold digit to zoom
-      // snare-ratchet camera offsets (smoothed in the render loop)
-      viewYaw: 0,
-      viewElev: 0,
-      viewDist: 0,
-      flyBoost: 0 // 0..1+ — ratchets spike this; characters animate faster
+      pulse: 0,
+      snap: 0,
+      hue: 0,
+      walkMult: 1,
+      leet: null, // null | '1' | '6' | '9'
+      stutterSlice: 0.12,
+      stutterRate: 1
     }
   </script>
 
   <script>
-    // ---------- Nardis, jazzy trip hop ----------
-    const BPM = 84
-    const SWING = 0.16   // odd 16ths pushed late by this fraction of a step
-    const HISS = 0.016
+    // ---------- Invitation parade — 1696 ----------
+    // Latin-leaning groove + Invitation form; keys 1 / 6 / 9 are leet FX.
+    const BPM = 92
+    const SWING = 0.06
+    const HISS = 0.008
 
-    // 32-bar AABA form, one chord per bar, in E minor (as Bill Evans played it).
-    // A: Em7 Fmaj7 B7 Cmaj7 Am7 Fmaj7 Emaj7 Em7
-    // B: Am7 Fmaj7 Am7 Fmaj7 Dm7 G7 Cmaj7 Fmaj7
+    // Jazz standard Invitation (Kaper) — Real Book concert C minor, 48 bars.
+    // A (16) | Bridge (16) | A′ (16). Melody from concert Real Book MusicXML (exact pitches/rhythms).
     const CHORDS = {
-      Em7:   { notes: [64, 67, 71, 74], root: 40, pc: 4 },
-      Fmaj7: { notes: [65, 69, 72, 76], root: 41, pc: 5 },
-      B7:    { notes: [63, 66, 69, 71], root: 35, pc: 11 },
-      Cmaj7: { notes: [60, 64, 67, 71], root: 36, pc: 0 },
-      Am7:   { notes: [60, 64, 67, 69], root: 33, pc: 9 },
-      Emaj7: { notes: [64, 68, 71, 75], root: 40, pc: 4 },
-      Dm7:   { notes: [62, 65, 69, 72], root: 38, pc: 2 },
-      G7:    { notes: [59, 62, 65, 67], root: 43, pc: 7 }
+      Cm7: { notes: [60, 63, 67, 70], root: 36, pc: 0 },
+      F7: { notes: [57, 60, 63, 67], root: 41, pc: 5 },
+      Bb7: { notes: [58, 62, 65, 68], root: 34, pc: 10 },
+      Ebm7: { notes: [63, 66, 70, 73], root: 39, pc: 3 },
+      Ab7: { notes: [56, 60, 63, 66], root: 32, pc: 8 },
+      Db7: { notes: [61, 65, 68, 71], root: 37, pc: 1 },
+      'C#m7': { notes: [61, 64, 68, 71], root: 37, pc: 1 },
+      'F#7': { notes: [54, 58, 61, 64], root: 42, pc: 6 },
+      Bm7: { notes: [59, 62, 66, 69], root: 35, pc: 11 },
+      E7: { notes: [52, 56, 59, 62], root: 40, pc: 4 },
+      Am7: { notes: [57, 60, 64, 67], root: 33, pc: 9 },
+      D7: { notes: [50, 54, 57, 60], root: 38, pc: 2 },
+      Gm7: { notes: [55, 58, 62, 65], root: 31, pc: 7 },
+      Em7b5: { notes: [64, 67, 70, 74], root: 40, pc: 4 },
+      Eb7: { notes: [51, 55, 58, 61], root: 39, pc: 3 },
+      G7: { notes: [55, 59, 62, 65], root: 31, pc: 7 },
+      B7: { notes: [59, 63, 66, 69], root: 35, pc: 11 },
+      Ebmmaj7: { notes: [63, 66, 70, 74], root: 39, pc: 3 }
     }
-    const A = ['Em7', 'Fmaj7', 'B7', 'Cmaj7', 'Am7', 'Fmaj7', 'Emaj7', 'Em7']
-    const B = ['Am7', 'Fmaj7', 'Am7', 'Fmaj7', 'Dm7', 'G7', 'Cmaj7', 'Fmaj7']
-    const FORM = [...A, ...A, ...B, ...A]
+    const FORM = ['Cm7', 'Cm7', 'Cm7', 'Cm7', 'Cm7', 'F7', 'Bb7', 'Bb7', 'Ebm7', 'Ebm7', 'Ebm7', 'Ebm7', 'Ebm7', 'Ab7', 'Db7', 'Db7', 'C#m7', 'F#7', 'Bm7', 'Bm7', 'Bm7', 'E7', 'Am7', 'Am7', 'Am7', 'D7', 'Gm7', 'Gm7', 'Em7b5', 'Eb7', 'D7', 'G7', 'Cm7', 'Cm7', 'Cm7', 'Cm7', 'Cm7', 'F7', 'Bb7', 'Bb7', 'Ebm7', 'Ebm7', 'B7', 'B7', 'F7', 'Bb7', 'Ebmmaj7', 'Ebmmaj7']
 
-    let clock, rhodes, ep, bass, kick, snare, hat, reverb, master
-    let duckBus, drumsBus // sidechain targets: keys/hiss duck hard, drums gently
-    const DRUMS_GAIN = 0.6
-    let bar = 0 // 0..31, advances once per 16-step loop
+    let clock, rhodes, ep, lead, bass, kick, snare, hat, reverb, master
+    let duckBus, drumsBus, leadBus, fxLp, bend
+    let spectrum = null
+    let spectrumData = null
+    const DRUMS_GAIN = 0.72
+    let bar = 0
+    let heldLeet = null
+    const FX_ENV = 0.16
+    const LP_OPEN = 12000
+    const LP_CLOSED = 260
+    const REVERB_DRY = 0.97
+    const REVERB_WET = 0.1
+    const REVERB_SOLO_DRY = 0.38
+    const REVERB_SOLO_WET = 0.68
+    const LEAD_GAIN = 0.28
+    const LEAD_SOLO_GAIN = 0.85
+    const keysEl = document.getElementById('keys')
 
     function currentChord () { return CHORDS[FORM[bar % FORM.length]] }
     function nextChord () { return CHORDS[FORM[(bar + 1) % FORM.length]] }
 
-    // ---------- Voice leading ----------
-    // Pick the inversion of each new chord that moves the voices the least
-    // from where they were, instead of jumping between root positions.
-
-    /** Every inversion of a closed voicing, each also tried an octave up/down. */
     function inversionsOf (notes) {
       const out = []
       let v = notes.slice().sort((a, b) => a - b)
@@ -175,7 +179,6 @@
       return out
     }
 
-    /** Least total voice movement from the previous shape, kept in register. */
     function voiceLead (from, notes) {
       let best = notes
       let bestCost = Infinity
@@ -184,9 +187,7 @@
         for (let i = 0; i < cand.length; i++) {
           cost += Math.abs(cand[i] - from[Math.min(i, from.length - 1)])
         }
-        // the ear follows the top voice — weight it a little extra
         cost += Math.abs(cand[cand.length - 1] - from[from.length - 1]) * 0.5
-        // gentle pull toward the home register so the shapes don't slowly sink
         const mean = cand.reduce((a, b) => a + b, 0) / cand.length
         cost += Math.abs(mean - 69) * 0.6
         for (const n of cand) {
@@ -201,18 +202,14 @@
       return best
     }
 
-    // deterministic, so the step-14 anticipation and the actual downbeat
-    // always agree on the next bar's shape
     let voicing = CHORDS[FORM[0]].notes.slice()
 
     function pick (arr) { return arr[(Math.random() * arr.length) | 0] }
 
-    /** Delay odd 16th steps for the lazy swung feel. */
     function swung (time, step) {
       return step % 2 === 1 ? time + clock.stepSeconds * SWING : time
     }
 
-    /** Fire a UI/stage callback in sync with a scheduled audio time. */
     function syncStage (time, fn) {
       const ms = Math.max(0, (time - peril.CONTEXT.currentTime) * 1000)
       setTimeout(fn, ms)
@@ -225,11 +222,6 @@
       param.exponentialRampToValueAtTime(0.0001, time + attack + Math.max(0.01, decay))
     }
 
-    /**
-     * Round-robin polyphony. Chord notes land on distinct voices no matter
-     * how the noteOn/noteOff calls interleave, which keeps stabs truly
-     * chordal instead of collapsing onto one retriggered voice.
-     */
     function createPoly (count, build) {
       const output = new peril.Channel({ gain: 1 })
       const voices = []
@@ -250,87 +242,80 @@
       }
     }
 
-    // ---------- Drums (dusty, slow, boom-bap) ----------
     function createKick () {
+      // tighter, punchier parade kick (less long trip-hop boom)
       const body = new peril.Oscillator({ type: 0, freq: 50, gain: 0 })
       const click = new peril.Noise({ type: peril.NOISE.WHITE, gain: 0 })
-      const clickBp = new peril.Filter({ type: 'bandpass', freq: 1100, Q: 1.1 })
+      const clickBp = new peril.Filter({ type: 'bandpass', freq: 1600, Q: 1.4 })
       const out = new peril.Channel({ gain: 1 })
-
       click.setOutput(clickBp)
       clickBp.setOutput(out)
       body.setOutput(out)
-
       return {
         output: out,
         trigger (time, vel = 1) {
-          const start = 118 + Math.random() * 18
+          const start = 150 + Math.random() * 22
           body.freqParam.cancelScheduledValues(time)
           body.freqParam.setValueAtTime(start, time)
-          body.freqParam.exponentialRampToValueAtTime(36, time + 0.12)
-          envGain(body.gainParam, time, 0.95 * vel, 0.003, 0.5)
-          envGain(click.gainParam, time, 0.16 * vel, 0.001, 0.02)
+          body.freqParam.exponentialRampToValueAtTime(42, time + 0.07)
+          envGain(body.gainParam, time, 0.88 * vel, 0.002, 0.28)
+          envGain(click.gainParam, time, 0.22 * vel, 0.001, 0.015)
         }
       }
     }
 
     function createSnare () {
-      const tone = new peril.Oscillator({ type: 1, freq: 165, gain: 0 })
+      // brighter, shorter — more rim / parade snare than soft trip-hop crack
+      const tone = new peril.Oscillator({ type: 1, freq: 200, gain: 0 })
       const noise = new peril.Noise({ type: peril.NOISE.WHITE, gain: 0 })
-      const noiseBp = new peril.Filter({ type: 'bandpass', freq: 2200, Q: 0.8 })
-      const noiseHp = new peril.Filter({ type: 'highpass', freq: 700, Q: 0.5 })
+      const noiseBp = new peril.Filter({ type: 'bandpass', freq: 3200, Q: 0.9 })
+      const noiseHp = new peril.Filter({ type: 'highpass', freq: 1100, Q: 0.6 })
       const out = new peril.Channel({ gain: 1 })
-
       tone.setOutput(out)
       noise.setOutput(noiseHp)
       noiseHp.setOutput(noiseBp)
       noiseBp.setOutput(out)
-
       return {
         output: out,
         trigger (time, vel = 1) {
-          const pitch = 158 + Math.random() * 20
+          const pitch = 190 + Math.random() * 24
           tone.freqParam.setValueAtTime(pitch, time)
-          tone.freqParam.exponentialRampToValueAtTime(pitch * 0.8, time + 0.09)
-          envGain(tone.gainParam, time, 0.34 * vel, 0.001, 0.13)
-          envGain(noise.gainParam, time, 0.5 * vel, 0.001, 0.2)
+          tone.freqParam.exponentialRampToValueAtTime(pitch * 0.85, time + 0.05)
+          envGain(tone.gainParam, time, 0.22 * vel, 0.001, 0.07)
+          envGain(noise.gainParam, time, 0.62 * vel, 0.001, 0.11)
         }
       }
     }
 
     function createHat () {
+      // dry cascade hats — light metal, less wash
       const noise = new peril.Noise({ type: peril.NOISE.WHITE, gain: 0 })
-      const hp = new peril.Filter({ type: 'highpass', freq: 8200, Q: 0.8 })
+      const hp = new peril.Filter({ type: 'highpass', freq: 9200, Q: 1.1 })
       const out = new peril.Channel({ gain: 1 })
-
       noise.setOutput(hp)
       hp.setOutput(out)
-
       return {
         output: out,
         trigger (time, vel = 1, open = false) {
-          const decay = open ? 0.24 : 0.035 + Math.random() * 0.02
-          envGain(noise.gainParam, time, 0.28 * vel, 0.001, decay)
-          hp.setFreq(open ? 6800 : 8200 + Math.random() * 1200)
+          const decay = open ? 0.16 : 0.022 + Math.random() * 0.012
+          envGain(noise.gainParam, time, 0.32 * vel, 0.001, decay)
+          hp.setFreq(open ? 7400 : 9200 + Math.random() * 1600)
         }
       }
     }
 
+    // parade / Latin pulse: kicks on beat + syncopations, pushier 2&4,
+    // ghost snares, denser cascara-ish hats (vs scene2 half-time sketch)
     const GROOVE = {
-      kick:  [1, 0, 0, 0, 0, 0, 0, 0.8, 0, 0, 1, 0, 0, 0, 0, 0],
-      snare: [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
-      hat:   [0.45, 0, 0.28, 0.5, 0.45, 0, 0.28, 0, 0.45, 0, 0.28, 0.5, 0.45, 0, 0.32, 0]
+      kick:  [1, 0, 0, 0.45, 0, 0, 0.85, 0, 0.55, 0, 1, 0, 0, 0.5, 0, 0],
+      snare: [0, 0, 0.22, 0, 1, 0, 0.18, 0, 0, 0.28, 0, 0.2, 1, 0, 0.3, 0],
+      hat:   [0.55, 0.28, 0.48, 0.28, 0.62, 0.28, 0.5, 0.22, 0.55, 0.28, 0.48, 0.3, 0.68, 0.32, 0.55, 0.35]
     }
 
-    /** Quick retrigger roll: n hits subdividing the step, velocity dying off. */
     function ratchet (voice, time, count, gap, vel) {
       for (let i = 0; i < count; i++) {
         voice.trigger(time + i * gap, vel * Math.pow(0.78, i))
       }
-      // visual: they take off a little harder during the roll
-      syncStage(time, () => {
-        window.stage.flyBoost = Math.min(1.25, window.stage.flyBoost + 0.55 + count * 0.1)
-      })
     }
 
     function drumHit (name, step, time) {
@@ -339,75 +324,54 @@
 
       if (name === 'kick') {
         if (!v) return
-        kick.trigger(t, v * (0.9 + Math.random() * 0.1))
+        kick.trigger(t, v * (0.88 + Math.random() * 0.12))
         syncStage(t, () => { window.stage.pulse = 1 })
       } else if (name === 'snare') {
-        if (v) {
-          // lazy backbeat, dragged a hair behind the grid
-          const lag = t + 0.012 + Math.random() * 0.008
-          if (Math.random() < 0.09) {
-            // subtle ratchet rolling out of the backbeat
-            ratchet(snare, lag, pick([2, 3]), clock.stepSeconds / pick([2, 3]), 0.85)
-            syncStage(lag, () => {
-              window.stage.snap = 1
-              // fresh random camera cut — yaw / height / distance each roll
-              window.stage.viewYaw = (Math.random() - 0.5) * 1.6   // ± ~45°
-              window.stage.viewElev = (Math.random() - 0.5) * 2.4  // ± height
-              window.stage.viewDist = (Math.random() - 0.5) * 4.5  // closer ↔ farther
-            })
-          } else {
-            snare.trigger(lag, 0.9)
-            syncStage(lag, () => { window.stage.snap = 1 })
-          }
-        } else if (step === 15 && Math.random() < 0.22) {
-          snare.trigger(t, 0.3) // ghost drag into the next bar
+        if (!v) return
+        // on / slightly ahead of grid (parade), not dragged trip-hop
+        const when = t - 0.004 + Math.random() * 0.006
+        const main = v >= 0.85
+        if (main && Math.random() < 0.05) {
+          ratchet(snare, when, 2, clock.stepSeconds / 3, 0.8)
+        } else {
+          snare.trigger(when, main ? 0.95 : 0.28 + v * 0.45)
         }
+        if (main) syncStage(when, () => { window.stage.snap = 1 })
       } else {
         if (!v) return
-        const open = step === 14 && Math.random() < 0.3
-        const vel = 0.35 + v * 0.5 + (Math.random() - 0.5) * 0.1
-        if (!open && Math.random() < 0.08) {
-          // hat ratchet: evenly subdivide the step, trap-flavored but quiet
-          const n = pick([2, 3, 4])
-          ratchet(hat, t, n, clock.stepSeconds / n, vel * 0.9)
-        } else {
-          hat.trigger(t, vel, open)
-        }
+        const open = (step === 6 || step === 14) && Math.random() < 0.35
+        const vel = 0.3 + v * 0.55 + (Math.random() - 0.5) * 0.08
+        hat.trigger(t, vel, open)
       }
     }
 
-    // ---------- Bass (sub, follows the changes) ----------
     function createBass () {
+      // pluckier tumbao bass — more mid grit, shorter bodies
       const sub = new peril.Oscillator({ type: 0, freq: 41, gain: 0 })
-      const grit = new peril.Oscillator({ type: 1, freq: 82, gain: 0 })
-      const flt = new peril.Filter({ type: 'lowpass', freq: 320, Q: 1.1 })
-      const out = new peril.Channel({ gain: 0.9 })
-
+      const grit = new peril.Oscillator({ type: 2, freq: 82, gain: 0 })
+      const flt = new peril.Filter({ type: 'lowpass', freq: 520, Q: 1.4 })
+      const out = new peril.Channel({ gain: 0.95 })
       sub.setOutput(flt)
       grit.setOutput(flt)
       flt.setOutput(out)
-
       return {
         output: out,
         trigger (time, note, vel = 1, len = 0.4) {
           const f = peril.mtof(note)
           sub.freqParam.setValueAtTime(f, time)
           grit.freqParam.setValueAtTime(f * 2, time)
-          envGain(sub.gainParam, time, 0.52 * vel, 0.01, len)
-          envGain(grit.gainParam, time, 0.11 * vel, 0.01, len * 0.6)
+          envGain(sub.gainParam, time, 0.48 * vel, 0.006, len)
+          envGain(grit.gainParam, time, 0.16 * vel, 0.004, len * 0.45)
           flt.freqParam.cancelScheduledValues(time)
-          flt.freqParam.setValueAtTime(180 + 420 * vel, time)
-          flt.freqParam.exponentialRampToValueAtTime(110, time + len)
+          flt.freqParam.setValueAtTime(280 + 520 * vel, time)
+          flt.freqParam.exponentialRampToValueAtTime(140, time + len * 0.7)
         }
       }
     }
 
-    // ---------- Sidechain (scheduled pump) ----------
-    // Every bass hit is scheduled by us, so instead of a real compressor we
-    // schedule the duck directly: dip fast, hold a touch, breathe back up.
-    const DUCK_ATTACK = 0.018
-    const DUCK_HOLD = 0.05
-    const DUCK_RELEASE = 0.26
+    const DUCK_ATTACK = 0.012
+    const DUCK_HOLD = 0.03
+    const DUCK_RELEASE = 0.18
 
     function duckParam (param, base, floor, time) {
       param.cancelScheduledValues(time)
@@ -417,14 +381,85 @@
       param.linearRampToValueAtTime(base, time + DUCK_ATTACK + DUCK_HOLD + DUCK_RELEASE)
     }
 
-    /** Duck everything under the bass — keys/hiss hard, drums only gently. */
     function duck (time, vel) {
-      if (!duckBus) return
-      duckParam(duckBus.gainParam, 1, 1 - 0.45 * vel, time)
-      duckParam(drumsBus.gainParam, DRUMS_GAIN, 1 - 0.22 * vel, time)
+      if (!duckBus || heldLeet === '6') return
+      duckParam(duckBus.gainParam, 1, 1 - 0.32 * vel, time)
+      duckParam(drumsBus.gainParam, DRUMS_GAIN, 1 - 0.12 * vel, time)
+    }
+
+    function rampParam (param, target, now, dur) {
+      if (!param) return
+      const from = param.value
+      param.cancelScheduledValues(now)
+      param.setValueAtTime(from, now)
+      param.linearRampToValueAtTime(target, now + Math.max(0.001, dur))
+    }
+
+    function setKeyHit (sel, on) {
+      const el = document.querySelector(sel)
+      if (el) el.classList.toggle('hit', on)
+    }
+
+    function pressLeet (digit) {
+      if (!window.stage.started || !window.stage.playing) return
+      if (digit !== '1' && digit !== '6' && digit !== '9') return
+      if (heldLeet === digit) return
+      if (heldLeet) releaseLeet()
+      heldLeet = digit
+      window.stage.leet = digit
+      setKeyHit('.key[data-say="' + digit + '"]', true)
+      const now = peril.CONTEXT.currentTime
+
+      if (digit === '1') {
+        // lowpass closes on all tracks with attack; opens on release with same env
+        if (fxLp) rampParam(fxLp.freqParam, LP_CLOSED, now, FX_ENV)
+      } else if (digit === '6') {
+        // solo melody + heavy reverb
+        if (duckBus) rampParam(duckBus.gainParam, 0.02, now, FX_ENV)
+        if (drumsBus) rampParam(drumsBus.gainParam, 0.02, now, FX_ENV)
+        if (bass) rampParam(bass.output.gainParam, 0.02, now, FX_ENV)
+        if (leadBus) rampParam(leadBus.gainParam, LEAD_SOLO_GAIN / LEAD_GAIN, now, FX_ENV)
+        if (reverb) {
+          rampParam(reverb.outputDry.gain, REVERB_SOLO_DRY, now, FX_ENV)
+          rampParam(reverb.outputWet.gain, REVERB_SOLO_WET, now, FX_ENV)
+        }
+      } else if (digit === '9') {
+        if (!bend || !clock) return
+        const step = clock.stepSeconds
+        const slice = pick([step / 4, step / 2, step, step * 1.5, step * 2])
+        const rate = pick([1, 1, 0.5, 1.5, 2, -1, -0.5])
+        window.stage.stutterSlice = slice
+        window.stage.stutterRate = rate
+        bend.repeat({ slice, hold: 60, rate, freeze: true })
+      }
+    }
+
+    function releaseLeet () {
+      if (!heldLeet) return
+      const digit = heldLeet
+      setKeyHit('.key[data-say="' + digit + '"]', false)
+      heldLeet = null
+      window.stage.leet = null
+      const now = peril.CONTEXT ? peril.CONTEXT.currentTime : 0
+
+      if (digit === '1') {
+        if (fxLp) rampParam(fxLp.freqParam, LP_OPEN, now, FX_ENV)
+      } else if (digit === '6') {
+        if (duckBus) rampParam(duckBus.gainParam, 1, now, FX_ENV)
+        if (drumsBus) rampParam(drumsBus.gainParam, DRUMS_GAIN, now, FX_ENV)
+        if (bass) rampParam(bass.output.gainParam, 0.95, now, FX_ENV)
+        if (leadBus) rampParam(leadBus.gainParam, 1, now, FX_ENV)
+        if (reverb) {
+          rampParam(reverb.outputDry.gain, REVERB_DRY, now, FX_ENV)
+          rampParam(reverb.outputWet.gain, REVERB_WET, now, FX_ENV)
+        }
+      } else if (digit === '9') {
+        if (bend) bend.release()
+      }
     }
 
     function bassHit (step, time) {
+      // tumbao-ish: anticipations + short pumps instead of long trip-hop drones
       const root = currentChord().root
       const t = swung(time, step)
       const sec = (n) => clock.stepSeconds * n
@@ -432,77 +467,241 @@
         bass.trigger(when, note, vel, len)
         duck(when, vel)
       }
-
-      if (step === 0) {
-        hit(t, root, 1, sec(6))
-      } else if (step === 7 && Math.random() < 0.5) {
-        hit(t, root, 0.4, sec(1)) // ghost
-      } else if (step === 10) {
-        const color = Math.random() < 0.3 ? 10 : 7 // fifth, sometimes b7
-        hit(t, root + color, 0.65, sec(2.5))
-      } else if (step === 14 && Math.random() < 0.6) {
-        // chromatic approach into the next bar's root
+      if (step === 0) hit(t, root, 0.95, sec(2.5))
+      else if (step === 3 && Math.random() < 0.55) hit(t, root, 0.45, sec(1.2))
+      else if (step === 6) hit(t, root + (Math.random() < 0.35 ? 7 : 0), 0.85, sec(2))
+      else if (step === 10) {
+        const color = Math.random() < 0.4 ? 10 : (Math.random() < 0.5 ? 5 : 7)
+        hit(t, root + color, 0.7, sec(1.8))
+      } else if (step === 12 && Math.random() < 0.45) hit(t, root, 0.4, sec(1))
+      else if (step === 14) {
         const target = nextChord().root
-        const from = target + (Math.random() < 0.5 ? 1 : -1)
-        hit(t, from, 0.55, sec(1.5))
+        const from = target + (Math.random() < 0.55 ? -2 : 2)
+        hit(t, from, 0.6, sec(1.2))
       }
     }
 
-    // ---------- Chords + e-piano comping ----------
     function playChord (notes, vel, time, dur) {
-      // slow jazz roll; occasionally thin the voicing (the bass owns the
-      // root, so dropping the bottom voice keeps it airy, not empty)
       let list = notes
       const r = Math.random()
       if (r < 0.18) list = notes.slice(1)
       else if (r < 0.28) list = notes.slice(0, -1)
-
       list.forEach((n, i) => {
         const t = time + i * (0.012 + Math.random() * 0.01)
         rhodes.play(n, vel * (0.85 + Math.random() * 0.15), t, dur * (0.9 + Math.random() * 0.2))
       })
     }
 
-    /** DX7 e-piano attack pad — rolled voicing, swelling in syncopation. */
     function epChord (notes, vel, time, dur) {
       let list = notes
       const r = Math.random()
-      if (r < 0.2) list = [...notes, notes[1] + 12] // sparkle on top
-      else if (r < 0.35) list = notes.slice(1)      // rootless
+      if (r < 0.2) list = [...notes, notes[1] + 12]
+      else if (r < 0.35) list = notes.slice(1)
       list.forEach((n, i) => {
         const t = time + i * (0.004 + Math.random() * 0.005)
         ep.play(n, vel * (0.85 + Math.random() * 0.15), t, dur)
       })
     }
 
-    // per-step stab probabilities — the "and"s do the talking
-    const EP_ODDS = { 4: 0.4, 7: 0.5, 11: 0.65, 14: 0.35 }
+    const EP_ODDS = { 2: 0.25, 6: 0.4, 10: 0.55, 14: 0.4 }
 
     function epHit (step, time) {
       const odds = EP_ODDS[step]
       if (!odds || Math.random() > odds) return
-      // step 14 anticipates the next bar's change (voiced from where we are),
-      // the rest comp the current bar's shape
       const shape = step === 14 ? voiceLead(voicing, nextChord().notes) : voicing
       const notes = shape.map((n) => n + 12)
       const t = swung(time, step) + Math.random() * 0.008
       const vel = 0.45 + Math.random() * 0.3
-      // pads: hold long enough for the swell to crest before releasing
       const dur = clock.stepSeconds * (6 + Math.random() * 4)
       epChord(notes, vel, t, dur)
     }
 
-    // ---------- Transport ----------
+    const MELODY = [
+      { bar: 0, step: 0, note: 74, dur: 3 },
+      { bar: 0, step: 3, note: 75, dur: 3 },
+      { bar: 0, step: 5, note: 86, dur: 3 },
+      { bar: 0, step: 8, note: 81, dur: 8 },
+      { bar: 1, step: 0, note: 81, dur: 4 },
+      { bar: 1, step: 4, note: 79, dur: 2 },
+      { bar: 1, step: 6, note: 82, dur: 2 },
+      { bar: 1, step: 8, note: 81, dur: 2 },
+      { bar: 1, step: 10, note: 79, dur: 4 },
+      { bar: 1, step: 14, note: 72, dur: 2 },
+      { bar: 2, step: 0, note: 74, dur: 8 },
+      { bar: 2, step: 8, note: 74, dur: 8 },
+      { bar: 3, step: 0, note: 74, dur: 8 },
+      { bar: 3, step: 8, note: 74, dur: 3 },
+      { bar: 3, step: 11, note: 72, dur: 3 },
+      { bar: 3, step: 13, note: 79, dur: 3 },
+      { bar: 4, step: 0, note: 74, dur: 8 },
+      { bar: 4, step: 8, note: 74, dur: 3 },
+      { bar: 4, step: 11, note: 72, dur: 3 },
+      { bar: 4, step: 13, note: 79, dur: 3 },
+      { bar: 5, step: 0, note: 74, dur: 12 },
+      { bar: 5, step: 12, note: 72, dur: 4 },
+      { bar: 6, step: 0, note: 79, dur: 16 },
+      { bar: 7, step: 0, note: 79, dur: 8 },
+      { bar: 8, step: 0, note: 77, dur: 3 },
+      { bar: 8, step: 3, note: 78, dur: 3 },
+      { bar: 8, step: 5, note: 89, dur: 3 },
+      { bar: 8, step: 8, note: 84, dur: 8 },
+      { bar: 9, step: 0, note: 84, dur: 4 },
+      { bar: 9, step: 4, note: 82, dur: 2 },
+      { bar: 9, step: 6, note: 85, dur: 2 },
+      { bar: 9, step: 8, note: 84, dur: 2 },
+      { bar: 9, step: 10, note: 82, dur: 4 },
+      { bar: 9, step: 14, note: 75, dur: 2 },
+      { bar: 10, step: 0, note: 77, dur: 8 },
+      { bar: 10, step: 8, note: 77, dur: 8 },
+      { bar: 11, step: 0, note: 77, dur: 8 },
+      { bar: 11, step: 8, note: 77, dur: 3 },
+      { bar: 11, step: 11, note: 75, dur: 3 },
+      { bar: 11, step: 13, note: 82, dur: 3 },
+      { bar: 12, step: 0, note: 77, dur: 8 },
+      { bar: 12, step: 8, note: 77, dur: 3 },
+      { bar: 12, step: 11, note: 75, dur: 3 },
+      { bar: 12, step: 13, note: 82, dur: 3 },
+      { bar: 13, step: 0, note: 77, dur: 12 },
+      { bar: 13, step: 12, note: 75, dur: 4 },
+      { bar: 14, step: 0, note: 82, dur: 16 },
+      { bar: 15, step: 0, note: 82, dur: 8 },
+      { bar: 16, step: 0, note: 80, dur: 2 },
+      { bar: 16, step: 2, note: 83, dur: 2 },
+      { bar: 16, step: 4, note: 85, dur: 2 },
+      { bar: 16, step: 6, note: 87, dur: 2 },
+      { bar: 16, step: 8, note: 87, dur: 8 },
+      { bar: 17, step: 0, note: 87, dur: 4 },
+      { bar: 17, step: 4, note: 80, dur: 2 },
+      { bar: 17, step: 6, note: 87, dur: 2 },
+      { bar: 17, step: 8, note: 86, dur: 4 },
+      { bar: 17, step: 12, note: 79, dur: 2 },
+      { bar: 17, step: 14, note: 86, dur: 2 },
+      { bar: 18, step: 0, note: 85, dur: 8 },
+      { bar: 18, step: 8, note: 85, dur: 8 },
+      { bar: 20, step: 0, note: 78, dur: 2 },
+      { bar: 20, step: 2, note: 81, dur: 2 },
+      { bar: 20, step: 4, note: 83, dur: 2 },
+      { bar: 20, step: 6, note: 85, dur: 2 },
+      { bar: 20, step: 8, note: 85, dur: 8 },
+      { bar: 21, step: 0, note: 85, dur: 4 },
+      { bar: 21, step: 4, note: 78, dur: 2 },
+      { bar: 21, step: 6, note: 85, dur: 2 },
+      { bar: 21, step: 8, note: 84, dur: 4 },
+      { bar: 21, step: 12, note: 77, dur: 2 },
+      { bar: 21, step: 14, note: 84, dur: 2 },
+      { bar: 22, step: 0, note: 83, dur: 16 },
+      { bar: 23, step: 12, note: 76, dur: 4 },
+      { bar: 24, step: 0, note: 76, dur: 2 },
+      { bar: 24, step: 2, note: 79, dur: 2 },
+      { bar: 24, step: 4, note: 81, dur: 2 },
+      { bar: 24, step: 6, note: 83, dur: 2 },
+      { bar: 24, step: 8, note: 83, dur: 8 },
+      { bar: 25, step: 0, note: 83, dur: 4 },
+      { bar: 25, step: 4, note: 76, dur: 2 },
+      { bar: 25, step: 6, note: 83, dur: 2 },
+      { bar: 25, step: 8, note: 82, dur: 4 },
+      { bar: 25, step: 12, note: 75, dur: 2 },
+      { bar: 25, step: 14, note: 82, dur: 2 },
+      { bar: 26, step: 0, note: 81, dur: 8 },
+      { bar: 26, step: 8, note: 81, dur: 8 },
+      { bar: 27, step: 0, note: 81, dur: 4 },
+      { bar: 27, step: 4, note: 79, dur: 4 },
+      { bar: 27, step: 8, note: 81, dur: 4 },
+      { bar: 27, step: 12, note: 82, dur: 4 },
+      { bar: 28, step: 0, note: 81, dur: 16 },
+      { bar: 29, step: 0, note: 81, dur: 3 },
+      { bar: 29, step: 3, note: 84, dur: 3 },
+      { bar: 29, step: 5, note: 81, dur: 3 },
+      { bar: 29, step: 8, note: 84, dur: 3 },
+      { bar: 29, step: 11, note: 81, dur: 3 },
+      { bar: 29, step: 13, note: 72, dur: 3 },
+      { bar: 30, step: 0, note: 75, dur: 16 },
+      { bar: 31, step: 0, note: 75, dur: 12 },
+      { bar: 31, step: 12, note: 77, dur: 4 },
+      { bar: 32, step: 0, note: 74, dur: 3 },
+      { bar: 32, step: 3, note: 75, dur: 3 },
+      { bar: 32, step: 5, note: 86, dur: 3 },
+      { bar: 32, step: 8, note: 81, dur: 8 },
+      { bar: 33, step: 0, note: 81, dur: 4 },
+      { bar: 33, step: 4, note: 79, dur: 2 },
+      { bar: 33, step: 6, note: 82, dur: 2 },
+      { bar: 33, step: 8, note: 81, dur: 2 },
+      { bar: 33, step: 10, note: 79, dur: 4 },
+      { bar: 33, step: 14, note: 72, dur: 2 },
+      { bar: 34, step: 0, note: 74, dur: 8 },
+      { bar: 34, step: 8, note: 74, dur: 8 },
+      { bar: 35, step: 0, note: 74, dur: 8 },
+      { bar: 35, step: 8, note: 74, dur: 3 },
+      { bar: 35, step: 11, note: 72, dur: 3 },
+      { bar: 35, step: 13, note: 79, dur: 3 },
+      { bar: 36, step: 0, note: 74, dur: 8 },
+      { bar: 36, step: 8, note: 74, dur: 3 },
+      { bar: 36, step: 11, note: 72, dur: 3 },
+      { bar: 36, step: 13, note: 79, dur: 3 },
+      { bar: 37, step: 0, note: 74, dur: 12 },
+      { bar: 37, step: 12, note: 72, dur: 4 },
+      { bar: 38, step: 0, note: 79, dur: 16 },
+      { bar: 39, step: 0, note: 79, dur: 8 },
+      { bar: 40, step: 0, note: 77, dur: 3 },
+      { bar: 40, step: 3, note: 78, dur: 3 },
+      { bar: 40, step: 5, note: 89, dur: 3 },
+      { bar: 40, step: 8, note: 84, dur: 8 },
+      { bar: 41, step: 0, note: 84, dur: 4 },
+      { bar: 41, step: 4, note: 82, dur: 2 },
+      { bar: 41, step: 6, note: 85, dur: 2 },
+      { bar: 41, step: 8, note: 84, dur: 2 },
+      { bar: 41, step: 10, note: 82, dur: 4 },
+      { bar: 41, step: 14, note: 75, dur: 2 },
+      { bar: 42, step: 0, note: 77, dur: 8 },
+      { bar: 42, step: 8, note: 77, dur: 8 },
+      { bar: 43, step: 0, note: 77, dur: 8 },
+      { bar: 43, step: 8, note: 75, dur: 3 },
+      { bar: 43, step: 11, note: 77, dur: 3 },
+      { bar: 43, step: 13, note: 75, dur: 3 },
+      { bar: 44, step: 0, note: 80, dur: 8 },
+      { bar: 44, step: 8, note: 78, dur: 3 },
+      { bar: 44, step: 11, note: 80, dur: 3 },
+      { bar: 44, step: 13, note: 78, dur: 3 },
+      { bar: 45, step: 0, note: 85, dur: 6 },
+      { bar: 45, step: 6, note: 83, dur: 2 },
+      { bar: 45, step: 8, note: 85, dur: 3 },
+      { bar: 45, step: 11, note: 83, dur: 3 },
+      { bar: 45, step: 13, note: 85, dur: 3 },
+      { bar: 46, step: 0, note: 86, dur: 16 },
+      { bar: 47, step: 0, note: 86, dur: 8 },
+    ]
+
+    function indexMelody (events) {
+      const map = new Map()
+      for (const ev of events) {
+        const key = ev.bar + ':' + ev.step
+        if (!map.has(key)) map.set(key, [])
+        map.get(key).push(ev)
+      }
+      return map
+    }
+    const MELODY_IDX = indexMelody(MELODY)
+
+    function melodyHit (step, time) {
+      if (!lead) return
+      const hits = MELODY_IDX.get((bar % FORM.length) + ':' + step)
+      if (!hits) return
+      const t = swung(time, step)
+      for (const ev of hits) {
+        lead.play(ev.note, 0.28, t, clock.stepSeconds * ev.dur, 0.04)
+      }
+    }
+
+
     const playBtn = document.getElementById('play')
     let booting = false
 
     function pausePerformance () {
       if (!window.stage.started || !window.stage.playing) return
+      releaseLeet()
       if (clock) clock.stop()
       window.stage.playing = false
-      if (peril.CONTEXT && peril.CONTEXT.state === 'running') {
-        peril.CONTEXT.suspend()
-      }
+      if (peril.CONTEXT && peril.CONTEXT.state === 'running') peril.CONTEXT.suspend()
     }
 
     async function resumePerformance () {
@@ -522,124 +721,6 @@
       else await resumePerformance()
     }
 
-    // ---------- Spoken digits + arrow ratchets ----------
-    const keysEl = document.getElementById('keys')
-    const FOCUS_OF = { 1: 'advocado', 6: 'advocat', 9: 'both' }
-    const ARROW_OF = {
-      ArrowUp: 'up', ArrowDown: 'down', ArrowLeft: 'left', ArrowRight: 'right'
-    }
-    // directional camera nudge applied on each arrow press
-    const DIR_NUDGE = {
-      up:    { yaw: 0, elev: 1.3, dist: -1.4 },
-      down:  { yaw: 0, elev: -1.3, dist: 1.2 },
-      left:  { yaw: -0.55, elev: 0.15, dist: 0 },
-      right: { yaw: 0.55, elev: 0.15, dist: 0 }
-    }
-    let heldDigit = null
-
-    function setKeyHit (sel, on) {
-      const el = document.querySelector(sel)
-      if (el) el.classList.toggle('hit', on)
-    }
-
-    function flashKey (sel) {
-      setKeyHit(sel, true)
-      setTimeout(() => setKeyHit(sel, false), 140)
-    }
-
-    function speakDigit (digit) {
-      if (!window.stage.started) return
-      if (!('speechSynthesis' in window)) return
-      const u = new SpeechSynthesisUtterance(digit)
-      u.lang = 'en-US'
-      u.volume = 0.5 // sit under the music instead of on top of it
-      u.rate = 0.95
-      u.pitch = 1.65 + Math.random() * 0.25 // high / chipmunk-ish
-      speechSynthesis.cancel() // retrigger instantly instead of queueing
-      speechSynthesis.speak(u)
-    }
-
-    function pressDigit (digit) {
-      if (!FOCUS_OF[digit]) return
-      if (heldDigit && heldDigit !== digit) {
-        setKeyHit('.key[data-say="' + heldDigit + '"]', false)
-      }
-      if (heldDigit === digit) return
-      heldDigit = digit
-      setKeyHit('.key[data-say="' + digit + '"]', true)
-      speakDigit(digit)
-      window.stage.focus = FOCUS_OF[digit]
-    }
-
-    function releaseDigit (digit) {
-      if (heldDigit !== digit) return
-      heldDigit = null
-      setKeyHit('.key[data-say="' + digit + '"]', false)
-      window.stage.focus = null
-    }
-
-    /** One-shot: random drum/bass fill + nudge the camera in the given direction. */
-    function pressArrow (dir) {
-      if (!window.stage.started || !window.stage.playing) return
-      if (!kick || !snare || !hat || !bass || !clock) return
-      flashKey('.key[data-dir="' + dir + '"]')
-
-      const now = peril.CONTEXT.currentTime + 0.02
-      const step = clock.stepSeconds
-      // shuffle a random subset of voices — one to three pieces of the kit
-      const toys = ['kick', 'snare', 'hat', 'bass']
-      for (let i = toys.length - 1; i > 0; i--) {
-        const j = (Math.random() * (i + 1)) | 0
-        ;[toys[i], toys[j]] = [toys[j], toys[i]]
-      }
-      const count = 1 + ((Math.random() * 3) | 0) // 1..3
-      let didSnap = false
-      let didPulse = false
-
-      for (let i = 0; i < count; i++) {
-        const when = now + i * 0.012
-        switch (toys[i]) {
-          case 'kick':
-            kick.trigger(when, 0.85 + Math.random() * 0.15)
-            didPulse = true
-            break
-          case 'snare':
-            if (Math.random() < 0.65) {
-              const n = pick([2, 3, 4])
-              ratchet(snare, when, n, step / n, 0.8)
-            } else {
-              snare.trigger(when, 0.9)
-            }
-            didSnap = true
-            break
-          case 'hat': {
-            const n = pick([2, 3, 4, 5])
-            if (Math.random() < 0.7) {
-              ratchet(hat, when, n, step / n, 0.55 + Math.random() * 0.25)
-            } else {
-              hat.trigger(when, 0.55 + Math.random() * 0.3, Math.random() < 0.25)
-            }
-            break
-          }
-          case 'bass': {
-            const root = currentChord().root
-            const note = root + pick([0, 0, 7, 10, 12])
-            bass.trigger(when, note, 0.7 + Math.random() * 0.3, step * (1.5 + Math.random() * 2))
-            duck(when, 0.75)
-            break
-          }
-        }
-      }
-      if (didSnap) window.stage.snap = 1
-      if (didPulse) window.stage.pulse = 1
-
-      const d = DIR_NUDGE[dir]
-      const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v))
-      window.stage.viewYaw = clamp(window.stage.viewYaw + d.yaw, -0.95, 0.95)
-      window.stage.viewElev = clamp(window.stage.viewElev + d.elev, -2.4, 2.4)
-      window.stage.viewDist = clamp(window.stage.viewDist + d.dist, -3.8, 3.8)
-    }
-
     addEventListener('keydown', (e) => {
       if (e.repeat || e.metaKey || e.ctrlKey || e.altKey) return
       if (e.code === 'Space' || e.key === ' ') {
@@ -649,44 +730,31 @@
       }
       if (e.key === '1' || e.key === '6' || e.key === '9') {
         e.preventDefault()
-        pressDigit(e.key)
-        return
-      }
-      const dir = ARROW_OF[e.key]
-      if (dir) {
-        e.preventDefault()
-        pressArrow(dir)
+        pressLeet(e.key)
       }
     })
 
     addEventListener('keyup', (e) => {
       if (e.key === '1' || e.key === '6' || e.key === '9') {
-        releaseDigit(e.key)
+        if (heldLeet === e.key) {
+          e.preventDefault()
+          releaseLeet()
+        }
       }
     })
 
-    // if the window blurs mid-hold, don't leave the camera zoomed in
-    addEventListener('blur', () => {
-      if (heldDigit) releaseDigit(heldDigit)
-    })
+    addEventListener('blur', () => releaseLeet())
 
     document.querySelectorAll('.key[data-say]').forEach((btn) => {
       const digit = btn.dataset.say
       btn.addEventListener('pointerdown', (e) => {
         e.preventDefault()
         btn.setPointerCapture(e.pointerId)
-        pressDigit(digit)
+        pressLeet(digit)
       })
-      btn.addEventListener('pointerup', () => releaseDigit(digit))
-      btn.addEventListener('pointercancel', () => releaseDigit(digit))
-    })
-
-    document.querySelectorAll('.key[data-dir]').forEach((btn) => {
-      const dir = btn.dataset.dir
-      btn.addEventListener('pointerdown', (e) => {
-        e.preventDefault()
-        pressArrow(dir)
-      })
+      btn.addEventListener('pointerup', () => releaseLeet())
+      btn.addEventListener('pointercancel', () => releaseLeet())
+      btn.addEventListener('lostpointercapture', () => releaseLeet())
     })
 
     async function startPerformance () {
@@ -697,35 +765,35 @@
         await peril.init()
         await peril.CONTEXT.resume()
 
-        master = new peril.Channel({ pan: 0, gain: 0.6 })
-        const mixBus = new peril.Channel({ pan: 0, gain: 0.75 })
-        const tape = new peril.Distortion({ drive: 0.06, style: 'soft', gain: 0.85 })
-        // dotted-eighth dub delay
+        master = new peril.Channel({ pan: 0, gain: 0.62 })
+        const mixBus = new peril.Channel({ pan: 0, gain: 0.78 })
+        const tape = new peril.Distortion({ drive: 0.09, style: 'soft', gain: 0.88 })
+        // straight 1/8 slap (not scene2's dotted-eighth dub)
         const delay = new peril.Delay({
-          time: (60 / BPM / 4) * 3,
-          feedback: 0.34,
-          wet: 0.2,
+          time: 60 / BPM / 2,
+          feedback: 0.18,
+          wet: 0.12,
           dry: 1
         })
-        reverb = new peril.Reverb({ dry: 0.95, wet: 0.16 })
-        const warmth = new peril.Filter({ type: 'lowpass', freq: 2400, Q: 0.5 })
-        const mud = new peril.Filter({ type: 'lowpass', freq: 5200, Q: 0.3 })
+        reverb = new peril.Reverb({ dry: REVERB_DRY, wet: REVERB_WET })
+        const warmth = new peril.Filter({ type: 'lowpass', freq: 4200, Q: 0.4 })
+        const mud = new peril.Filter({ type: 'lowpass', freq: 7800, Q: 0.25 })
+        // global FX lowpass — open by default; key 1 closes it
+        fxLp = new peril.Filter({ type: 'lowpass', freq: LP_OPEN, Q: 0.7 })
+        bend = new peril.Bend({ bufferSeconds: 2, dry: 1, wet: 1 })
 
-        // slow breathing on the warmth filter
-        const lfo = new peril.Oscillator({ type: 0, freq: 0.06, gain: 1 })
+        const lfo = new peril.Oscillator({ type: 0, freq: 0.11, gain: 1 })
         const lfoDepth = peril.CONTEXT.createGain()
-        lfoDepth.gain.value = 260
+        lfoDepth.gain.value = 180
         lfo.output.connect(lfoDepth)
         lfoDepth.connect(warmth.freqParam)
 
-        // vinyl hiss bed
         const vinyl = new peril.Noise({ type: peril.NOISE.PINK, gain: HISS })
-        const hissFilter = new peril.Filter({ type: 'highpass', freq: 1400, Q: 0.4 })
+        const hissFilter = new peril.Filter({ type: 'highpass', freq: 2400, Q: 0.5 })
         vinyl.setOutput(hissFilter)
 
-        // drums
         drumsBus = new peril.Channel({ gain: DRUMS_GAIN })
-        const drumTone = new peril.Filter({ type: 'lowpass', freq: 8500, Q: 0.4 })
+        const drumTone = new peril.Filter({ type: 'lowpass', freq: 12000, Q: 0.35 })
         kick = createKick()
         snare = createSnare()
         hat = createHat()
@@ -737,137 +805,184 @@
         bass = createBass()
 
         await reverb.load('./assets/ir/ir1.wav')
-
-        // dedicated wash for the DX7 pads — present but not drowning
-        const epVerb = new peril.Reverb({ dry: 0.6, wet: 0.42 })
+        const epVerb = new peril.Reverb({ dry: 0.72, wet: 0.28 })
         await epVerb.load('./assets/ir/ir1.wav')
 
-        // Rhodes-ish keys: sine body + short bell partial, slight per-voice pan
         rhodes = createPoly(8, () => {
-            const body = new peril.Oscillator({ type: 0, freq: 220, gain: 0 })
-            const bell = new peril.Oscillator({ type: 0, freq: 880, gain: 0 })
-            const mix = new peril.Channel({
-              pan: (Math.random() - 0.5) * 0.5,
-              gain: 0
-            })
-            body.setOutput(mix)
-            bell.setOutput(mix)
-            const env = new peril.ADSR(mix.gainParam, {
-              attack: 0.005,
-              decay: 1.5,
-              sustain: 0.16,
-              release: 0.9
-            })
-            const bellEnv = new peril.ADSR(bell.gainParam, {
-              attack: 0.002,
-              decay: 0.3,
-              sustain: 0.04,
-              release: 0.2
-            })
-            return {
-              output: mix,
-              triggerAttack (freq, vel, time) {
-                body.freqParam.setValueAtTime(freq, time)
-                bell.freqParam.setValueAtTime(freq * 2.004, time) // barely-sharp shimmer
-                body.gainParam.setValueAtTime(0.3, time)
-                env.triggerAttack(vel * 0.3, time)
-                bellEnv.triggerAttack(vel * 0.1, time)
-              },
-              triggerRelease (time) {
-                env.triggerRelease(time)
-                bellEnv.triggerRelease(time)
-              },
-              dispose () {
-                body.disconnect()
-                bell.disconnect()
-                mix.disconnect()
-              }
+          const body = new peril.Oscillator({ type: 0, freq: 220, gain: 0 })
+          const bell = new peril.Oscillator({ type: 0, freq: 880, gain: 0 })
+          const mix = new peril.Channel({
+            pan: (Math.random() - 0.5) * 0.5,
+            gain: 0
+          })
+          body.setOutput(mix)
+          bell.setOutput(mix)
+          const env = new peril.ADSR(mix.gainParam, {
+            attack: 0.004, decay: 1.1, sustain: 0.12, release: 0.65
+          })
+          const bellEnv = new peril.ADSR(bell.gainParam, {
+            attack: 0.001, decay: 0.22, sustain: 0.03, release: 0.15
+          })
+          return {
+            output: mix,
+            triggerAttack (freq, vel, time) {
+              body.freqParam.setValueAtTime(freq, time)
+              bell.freqParam.setValueAtTime(freq * 2.01, time)
+              body.gainParam.setValueAtTime(0.28, time)
+              env.triggerAttack(vel * 0.26, time)
+              bellEnv.triggerAttack(vel * 0.12, time)
+            },
+            triggerRelease (time) {
+              env.triggerRelease(time)
+              bellEnv.triggerRelease(time)
+            },
+            dispose () {
+              body.disconnect(); bell.disconnect(); mix.disconnect()
             }
+          }
         })
 
-        // DX7-style FM pad: two operator pairs per voice — a 1:1 body whose
-        // FM index blooms with the swell, and a 14:1 "tine" pair adding a
-        // glassy shimmer as the note crests
         ep = createPoly(10, () => {
-            const modBody = new peril.Oscillator({ type: 0, freq: 440, gain: 1 })
-            const body = new peril.Oscillator({ type: 0, freq: 440, gain: 0, mod: modBody, modAmount: 0 })
-            const modTine = new peril.Oscillator({ type: 0, freq: 6160, gain: 1 })
-            const tine = new peril.Oscillator({ type: 0, freq: 440, gain: 0, mod: modTine, modAmount: 0 })
-            const mix = new peril.Channel({
-              pan: (Math.random() - 0.5) * 0.6,
-              gain: 0
-            })
-            body.setOutput(mix)
-            tine.setOutput(mix)
-            // attack pad: slow swell in, long tail out
-            const env = new peril.ADSR(mix.gainParam, {
-              attack: 0.7,
-              decay: 1.2,
-              sustain: 0.6,
-              release: 1.6
-            })
-            return {
-              output: mix,
-              triggerAttack (freq, vel, time) {
-                modBody.freqParam.setValueAtTime(freq, time)
-                body.freqParam.setValueAtTime(freq, time)
-                // keep the tine ratio harmonic but under Nyquist for high notes
-                let tineRatio = 14
-                while (freq * tineRatio > 19000) tineRatio /= 2
-                modTine.freqParam.setValueAtTime(freq * tineRatio, time)
-                tine.freqParam.setValueAtTime(freq, time)
+          const modBody = new peril.Oscillator({ type: 0, freq: 440, gain: 1 })
+          const body = new peril.Oscillator({ type: 0, freq: 440, gain: 0, mod: modBody, modAmount: 0 })
+          const modTine = new peril.Oscillator({ type: 0, freq: 6160, gain: 1 })
+          const tine = new peril.Oscillator({ type: 0, freq: 440, gain: 0, mod: modTine, modAmount: 0 })
+          const mix = new peril.Channel({
+            pan: (Math.random() - 0.5) * 0.6,
+            gain: 0
+          })
+          body.setOutput(mix)
+          tine.setOutput(mix)
+          const env = new peril.ADSR(mix.gainParam, {
+            attack: 0.7, decay: 1.2, sustain: 0.6, release: 1.6
+          })
+          return {
+            output: mix,
+            triggerAttack (freq, vel, time) {
+              modBody.freqParam.setValueAtTime(freq, time)
+              body.freqParam.setValueAtTime(freq, time)
+              let tineRatio = 14
+              while (freq * tineRatio > 19000) tineRatio /= 2
+              modTine.freqParam.setValueAtTime(freq * tineRatio, time)
+              tine.freqParam.setValueAtTime(freq, time)
 
-                // FM index blooms with the swell — dark in, bright at the
-                // crest, then mellowing back down
-                const bodyIdx = body.node.parameters.get('modAmount')
-                bodyIdx.cancelScheduledValues(time)
-                bodyIdx.setValueAtTime(freq * 0.1, time)
-                bodyIdx.exponentialRampToValueAtTime(freq * (0.4 + vel * 1.1), time + 0.75)
-                bodyIdx.exponentialRampToValueAtTime(freq * 0.15, time + 2.4)
+              const bodyIdx = body.node.parameters.get('modAmount')
+              bodyIdx.cancelScheduledValues(time)
+              bodyIdx.setValueAtTime(freq * 0.1, time)
+              bodyIdx.exponentialRampToValueAtTime(freq * (0.4 + vel * 1.1), time + 0.75)
+              bodyIdx.exponentialRampToValueAtTime(freq * 0.15, time + 2.4)
 
-                const tineIdx = tine.node.parameters.get('modAmount')
-                tineIdx.cancelScheduledValues(time)
-                tineIdx.setValueAtTime(freq * 2 * vel, time)
-                tineIdx.exponentialRampToValueAtTime(1, time + 1.2)
+              const tineIdx = tine.node.parameters.get('modAmount')
+              tineIdx.cancelScheduledValues(time)
+              tineIdx.setValueAtTime(freq * 2 * vel, time)
+              tineIdx.exponentialRampToValueAtTime(1, time + 1.2)
 
-                body.gainParam.setValueAtTime(0.3, time)
-                // shimmer rides the swell instead of pinging the onset
-                envGain(tine.gainParam, time, 0.08 * vel, 0.55, 0.7)
-                env.triggerAttack(vel * 0.22, time)
-              },
-              triggerRelease (time) { env.triggerRelease(time) },
-              dispose () {
-                modBody.disconnect()
-                body.disconnect()
-                modTine.disconnect()
-                tine.disconnect()
-                mix.disconnect()
-              }
+              body.gainParam.setValueAtTime(0.3, time)
+              envGain(tine.gainParam, time, 0.08 * vel, 0.55, 0.7)
+              env.triggerAttack(vel * 0.22, time)
+            },
+            triggerRelease (time) { env.triggerRelease(time) },
+            dispose () {
+              modBody.disconnect(); body.disconnect()
+              modTine.disconnect(); tine.disconnect(); mix.disconnect()
             }
+          }
         })
 
-        // routing: keys → warmth → duckBus (sidechained under the bass),
-        // everything → mixBus → tape → delay → reverb → mud → master;
-        // the bass skips the duck so it rides on top of the pump
+        // bright mono lead — Invitation head + subtle per-note square FM
+        lead = (() => {
+          const CENTS = Math.pow(2, 8 / 1200) - 1 // ~±8¢ — subtle square wobble
+          const lfo = new peril.Oscillator({ type: 4, freq: 3, gain: 1 }) // square
+          const osc = new peril.Oscillator({ type: 0, freq: 440, gain: 0, mod: lfo, modAmount: 0 })
+          const air = new peril.Oscillator({ type: 2, freq: 440, gain: 0, mod: lfo, modAmount: 0 })
+          const flt = new peril.Filter({ type: 'lowpass', freq: 3800, Q: 0.7 })
+          const mix = new peril.Channel({ pan: 0.12, gain: 0 })
+          osc.setOutput(flt)
+          air.setOutput(flt)
+          flt.setOutput(mix)
+          const env = new peril.ADSR(mix.gainParam, {
+            attack: 0.015,
+            decay: 0.18,
+            sustain: 0.62,
+            release: 0.35
+          })
+          let lastFreq = 440
+          return {
+            output: mix,
+            play (note, vel, time, dur, glide = 0.035) {
+              const freq = Math.max(40, peril.mtof(note))
+              const g = Math.max(0.015, glide)
+              // slow random square-LFO rate each note (~1.2–3.5 Hz)
+              const lfoHz = 1.2 + Math.random() * 2.3
+              lfo.freqParam.setValueAtTime(lfoHz, time)
+              if (typeof lfo.setPhase === 'function') lfo.setPhase(0)
+
+              const depth = freq * CENTS
+              const oscMod = osc.node.parameters.get('modAmount')
+              const airMod = air.node.parameters.get('modAmount')
+              oscMod.cancelScheduledValues(time)
+              airMod.cancelScheduledValues(time)
+              oscMod.setValueAtTime(depth, time)
+              airMod.setValueAtTime(depth * 0.85, time)
+
+              osc.freqParam.cancelScheduledValues(time)
+              air.freqParam.cancelScheduledValues(time)
+              osc.freqParam.setValueAtTime(Math.max(40, lastFreq), time)
+              air.freqParam.setValueAtTime(Math.max(40, lastFreq), time)
+              osc.freqParam.exponentialRampToValueAtTime(freq, time + g)
+              air.freqParam.exponentialRampToValueAtTime(freq, time + g)
+              osc.gainParam.setValueAtTime(0.48, time)
+              air.gainParam.setValueAtTime(0.1 * vel, time)
+              // enveloped opening filter — closed → open → settle
+              const fClose = 520 + vel * 280
+              const fOpen = 3200 + vel * 1400
+              const fSustain = 1400 + vel * 400
+              const atk = 0.04 + Math.random() * 0.05
+              const dec = Math.min(0.55, Math.max(0.12, dur * 0.35))
+              flt.freqParam.cancelScheduledValues(time)
+              flt.freqParam.setValueAtTime(Math.max(80, fClose), time)
+              flt.freqParam.exponentialRampToValueAtTime(Math.max(200, fOpen), time + atk)
+              flt.freqParam.exponentialRampToValueAtTime(Math.max(200, fSustain), time + atk + dec)
+              env.triggerAttack(vel * 0.5, time)
+              env.triggerRelease(time + dur)
+              lastFreq = freq
+            }
+          }
+        })()
+
         duckBus = new peril.Channel({ gain: 1 })
-        ep.output.gainParam.value = 0.32 // tuck the pads under the mix
+        leadBus = new peril.Channel({ gain: 1 })
+        ep.output.gainParam.value = 0.22
+        lead.output.gainParam.value = LEAD_GAIN
+        rhodes.output.gainParam.value = 0.85
         rhodes.output.setOutput(warmth)
         ep.output.setOutput(epVerb)
         epVerb.setOutput(warmth)
+        lead.output.setOutput(leadBus)
         warmth.setOutput(duckBus)
         hissFilter.setOutput(duckBus)
         duckBus.setOutput(mixBus)
+        leadBus.setOutput(mixBus)
         drumsBus.setOutput(mixBus)
         bass.output.setOutput(mixBus)
-        mixBus.setOutput(tape)
+        mixBus.setOutput(fxLp)
+        fxLp.setOutput(bend)
+        bend.setOutput(tape)
         tape.setOutput(delay)
         delay.setOutput(reverb)
         reverb.setOutput(mud)
         mud.setOutput(master)
+        // spectrum from mixBus (pre-fx) so kick/bass still light the front rows
+        spectrum = peril.CONTEXT.createAnalyser()
+        spectrum.fftSize = 512
+        spectrum.smoothingTimeConstant = 0.55
+        spectrum.minDecibels = -95
+        spectrum.maxDecibels = -25
+        spectrumData = new Uint8Array(spectrum.frequencyBinCount)
+        mixBus.output.connect(spectrum)
         master.output.connect(peril.CONTEXT.destination)
 
         const always = Array(16).fill(1)
-
         const kickSeq = new peril.Sequencer({
           sequence: always,
           callback (_v, time, step) { drumHit('kick', step, time) }
@@ -888,26 +1003,22 @@
           sequence: always,
           callback (_v, time, step) { epHit(step, time) }
         })
-
-        // one chord per bar through the 32-bar Nardis form; the rhodes bed
-        // holds the downbeat while the DX7 e-piano does the comping
+        const melodySeq = new peril.Sequencer({
+          sequence: always,
+          callback (_v, time, step) { melodyHit(step, time) }
+        })
         const chordSeq = new peril.Sequencer({
           sequence: [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
           callback (_v, time) {
             const name = FORM[bar % FORM.length]
             const chord = CHORDS[name]
-            // re-anchor each chorus on the home shape; voice-lead the rest
             voicing = bar % FORM.length === 0
               ? chord.notes.slice()
               : voiceLead(voicing, chord.notes)
-            playChord(voicing, 0.75, time, clock.stepSeconds * 11)
-            syncStage(time, () => {
-              window.stage.hue = chord.pc / 12
-            })
+            playChord(voicing, 0.68, time, clock.stepSeconds * 8)
+            syncStage(time, () => { window.stage.hue = chord.pc / 12 })
           }
         })
-
-        // advance the form at the end of each 16-step bar
         const formSeq = new peril.Sequencer({
           sequence: always,
           callback (_v, _time, step) {
@@ -919,7 +1030,7 @@
           bpm: BPM,
           subdivision: 4,
           steps: 16,
-          sequences: [chordSeq, kickSeq, snareSeq, hatSeq, bassSeq, epSeq, formSeq]
+          sequences: [chordSeq, kickSeq, snareSeq, hatSeq, bassSeq, epSeq, melodySeq, formSeq]
         })
         clock.start()
         window.stage.started = true
@@ -946,16 +1057,19 @@
     import * as THREE from 'three'
     import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js'
     import { RenderPass } from 'three/addons/postprocessing/RenderPass.js'
-    import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js'
     import { OutputPass } from 'three/addons/postprocessing/OutputPass.js'
+    import { FBXLoader } from 'three/addons/loaders/FBXLoader.js'
 
-    // ---------- Scene ----------
+    // ---------- Pink world ----------
+    const SKY = 0xf4a7c0
     const scene = new THREE.Scene()
-    scene.background = new THREE.Color(0x05060e)
-    scene.fog = new THREE.Fog(0x05060e, 14, 46)
+    scene.background = new THREE.Color(SKY)
+    scene.fog = new THREE.Fog(SKY, 18, 90)
 
-    const camera = new THREE.PerspectiveCamera(42, innerWidth / innerHeight, 0.1, 200)
-    camera.position.set(6.46, 11.636, 13.096)
+    const camera = new THREE.PerspectiveCamera(50, innerWidth / innerHeight, 0.1, 200)
+    // high enough for stacked heads, tipped toward mid-crowd faces
+    camera.position.set(-2.404, 2.646, -1.498)
+    camera.lookAt(0.275, 0.921, -11.218)
 
     const renderer = new THREE.WebGLRenderer({ antialias: true })
     renderer.setSize(innerWidth, innerHeight)
@@ -964,54 +1078,53 @@
 
     const composer = new EffectComposer(renderer)
     composer.addPass(new RenderPass(scene, camera))
-    const bloom = new UnrealBloomPass(
-      new THREE.Vector2(innerWidth, innerHeight), 0.9, 0.7, 0.32
-    )
-    composer.addPass(bloom)
     composer.addPass(new OutputPass())
 
-    // dim, cool ambience — the rainbows do the real lighting
-    const hemi = new THREE.HemisphereLight(0x33406a, 0x150a26, 0.55)
+    const hemi = new THREE.HemisphereLight(0xffe0ec, 0xe88aaa, 1.05)
     scene.add(hemi)
-    const rim = new THREE.DirectionalLight(0x5566aa, 0.5)
-    rim.position.set(-4, 8, -6)
-    scene.add(rim)
-    // neutral warm fill so the suits keep their own colors against the glow
-    const fill = new THREE.DirectionalLight(0xffe9d6, 0.55)
-    fill.position.set(3, 6, 8)
+    const sun = new THREE.DirectionalLight(0xfff0f5, 1.15)
+    sun.position.set(6, 14, 8)
+    scene.add(sun)
+    const fill = new THREE.DirectionalLight(0xffc2d6, 0.45)
+    fill.position.set(-8, 6, -4)
     scene.add(fill)
 
-    // barely-there floor for the rainbow light to pool on
+    // pink treadmill floor
+    const groundCanvas = document.createElement('canvas')
+    groundCanvas.width = groundCanvas.height = 256
+    const gctx = groundCanvas.getContext('2d')
+    gctx.fillStyle = '#f3c9d6'
+    gctx.fillRect(0, 0, 256, 256)
+    gctx.fillStyle = 'rgba(255,255,255,0.22)'
+    for (let i = 0; i < 28; i++) {
+      gctx.beginPath()
+      gctx.arc(Math.random() * 256, Math.random() * 256, 2 + Math.random() * 3, 0, Math.PI * 2)
+      gctx.fill()
+    }
+    gctx.strokeStyle = 'rgba(220, 120, 150, 0.25)'
+    gctx.lineWidth = 2
+    for (let i = 0; i < 8; i++) {
+      gctx.beginPath()
+      gctx.moveTo(0, i * 32)
+      gctx.lineTo(256, i * 32)
+      gctx.stroke()
+    }
+    const groundTex = new THREE.CanvasTexture(groundCanvas)
+    groundTex.wrapS = groundTex.wrapT = THREE.RepeatWrapping
+    groundTex.repeat.set(90, 90)
     const ground = new THREE.Mesh(
-      new THREE.CircleGeometry(40, 48),
-      new THREE.MeshStandardMaterial({ color: 0x0b0c16, roughness: 0.85 })
+      new THREE.PlaneGeometry(260, 260),
+      new THREE.MeshToonMaterial({ map: groundTex, color: 0xffffff })
     )
     ground.rotation.x = -Math.PI / 2
     scene.add(ground)
 
-    // star dust
-    {
-      const count = 700
-      const pos = new Float32Array(count * 3)
-      for (let i = 0; i < count; i++) {
-        const r = 40 + Math.random() * 50
-        const th = Math.random() * Math.PI * 2
-        const ph = Math.acos(2 * Math.random() - 1)
-        pos[i * 3] = r * Math.sin(ph) * Math.cos(th)
-        pos[i * 3 + 1] = Math.abs(r * Math.cos(ph)) * 0.6 + 1
-        pos[i * 3 + 2] = r * Math.sin(ph) * Math.sin(th)
-      }
-      const geo = new THREE.BufferGeometry()
-      geo.setAttribute('position', new THREE.BufferAttribute(pos, 3))
-      const stars = new THREE.Points(geo, new THREE.PointsMaterial({
-        color: 0x8899cc, size: 0.16, transparent: true, opacity: 0.7,
-        sizeAttenuation: true, fog: false
-      }))
-      scene.add(stars)
+    // ---------- Character helpers (shared materials for the army) ----------
+    const matCache = new Map()
+    const toon = (color) => {
+      if (!matCache.has(color)) matCache.set(color, new THREE.MeshToonMaterial({ color }))
+      return matCache.get(color)
     }
-
-    // ---------- Character helpers (same cast as scene 1) ----------
-    const toon = (color) => new THREE.MeshToonMaterial({ color })
 
     function mesh (geo, mat, x = 0, y = 0, z = 0) {
       const m = new THREE.Mesh(geo, mat)
@@ -1028,9 +1141,10 @@
     function eyePair (parent, sep, y, z, r = 0.09, browColor = null) {
       const eyeMat = toon(0x1c1c1c)
       const hiMat = toon(0xffffff)
+      const brows = []
       for (const s of [-1, 1]) {
-        const eye = mesh(new THREE.SphereGeometry(r, 16, 16), eyeMat, s * sep, y, z)
-        const hi = mesh(new THREE.SphereGeometry(r * 0.35, 8, 8), hiMat, r * 0.3, r * 0.3, r * 0.75)
+        const eye = mesh(new THREE.SphereGeometry(r, 12, 12), eyeMat, s * sep, y, z)
+        const hi = mesh(new THREE.SphereGeometry(r * 0.35, 6, 6), hiMat, r * 0.3, r * 0.3, r * 0.75)
         eye.add(hi)
         parent.add(eye)
         if (browColor) {
@@ -1040,17 +1154,22 @@
             s * sep, y + r * 2.4, z
           )
           brow.rotation.z = -s * 0.18
+          brow.userData.baseY = brow.position.y
+          brow.userData.baseRotZ = brow.rotation.z
+          brow.userData.side = s
           parent.add(brow)
+          brows.push(brow)
         }
       }
+      return brows
     }
 
     function smile (parent, y, z, w = 0.3, open = true) {
-      const mouth = mesh(new THREE.SphereGeometry(w, 20, 20), toon(0x5b1f1f), 0, y, z)
+      const mouth = mesh(new THREE.SphereGeometry(w, 14, 14), toon(0x5b1f1f), 0, y, z)
       mouth.scale.set(1, 0.62, 0.35)
       parent.add(mouth)
       if (open) {
-        const tongue = mesh(new THREE.SphereGeometry(w * 0.55, 16, 16), toon(0xe06a6a), 0, y - w * 0.28, z + w * 0.18)
+        const tongue = mesh(new THREE.SphereGeometry(w * 0.55, 10, 10), toon(0xe06a6a), 0, y - w * 0.28, z + w * 0.18)
         tongue.scale.set(1, 0.5, 0.4)
         parent.add(tongue)
       }
@@ -1068,8 +1187,7 @@
         c.scale.z = 0.25
         parent.add(c)
       }
-      const knot = mesh(new THREE.BoxGeometry(0.11, 0.1, 0.05), toon(tie), 0, y + 0.17, z + 0.05)
-      parent.add(knot)
+      parent.add(mesh(new THREE.BoxGeometry(0.11, 0.1, 0.05), toon(tie), 0, y + 0.17, z + 0.05))
       const blade = mesh(new THREE.ConeGeometry(0.09, 0.5, 4), toon(tie), 0, y - 0.12, z + 0.04)
       blade.rotation.y = Math.PI / 4
       blade.scale.z = 0.35
@@ -1081,7 +1199,6 @@
       }
     }
 
-    // ---------- Advocado (avocado in a green suit) ----------
     function buildAdvocado () {
       const g = new THREE.Group()
       const FLESH = 0xc9d96e
@@ -1089,40 +1206,31 @@
       const SUIT_DARK = 0x3a6331
       const GLOVE = 0x3f6634
 
-      const body = mesh(new THREE.SphereGeometry(1, 32, 32), toon(FLESH), 0, 1.45, 0)
+      const body = mesh(new THREE.SphereGeometry(1, 20, 20), toon(FLESH), 0, 1.45, 0)
       body.scale.set(0.82, 1.15, 0.72)
       g.add(body)
 
-      const skin = mesh(new THREE.SphereGeometry(1.0, 32, 32), toon(0x557a37), 0, 1.45, -0.18)
+      const skin = mesh(new THREE.SphereGeometry(1.0, 20, 20), toon(0x557a37), 0, 1.45, -0.18)
       skin.scale.set(0.8, 1.13, 0.6)
       g.add(skin)
 
-      const jacketMat = new THREE.MeshToonMaterial({ color: SUIT, side: THREE.DoubleSide })
       const jacket = new THREE.Mesh(
-        new THREE.SphereGeometry(1.04, 32, 24, 0, Math.PI * 2, Math.PI * 0.47, Math.PI * 0.53),
-        jacketMat
+        new THREE.SphereGeometry(1.04, 20, 16, 0, Math.PI * 2, Math.PI * 0.47, Math.PI * 0.53),
+        new THREE.MeshToonMaterial({ color: SUIT, side: THREE.DoubleSide })
       )
       jacket.position.set(0, 1.45, 0)
       jacket.scale.set(0.85, 1.19, 0.75)
       g.add(jacket)
 
       suitFront(g, 1.36, 0.78, 0xf3d878, 0x7a4a22, SUIT_DARK)
-
-      eyePair(g, 0.3, 1.98, 0.68, 0.1, 0x6b5322)
+      const brows = eyePair(g, 0.3, 1.98, 0.68, 0.09, 0x6b5322)
       smile(g, 1.72, 0.73, 0.19, true)
-      for (const s of [-1, 1]) {
-        const blush = mesh(new THREE.CircleGeometry(0.09, 16), toon(0xdf9a86), s * 0.52, 1.74, 0.68)
-        blush.rotation.y = s * 0.35
-        g.add(blush)
-      }
 
       const arms = []
       for (const s of [-1, 1]) {
         const p = pivot(s * 0.78, 1.35, 0)
-        const arm = mesh(new THREE.CapsuleGeometry(0.13, 0.5, 6, 12), toon(SUIT), 0, -0.32, 0)
-        p.add(arm)
-        const hand = mesh(new THREE.SphereGeometry(0.17, 14, 14), toon(GLOVE), 0, -0.68, 0)
-        p.add(hand)
+        p.add(mesh(new THREE.CapsuleGeometry(0.13, 0.5, 4, 8), toon(SUIT), 0, -0.32, 0))
+        p.add(mesh(new THREE.SphereGeometry(0.17, 10, 10), toon(GLOVE), 0, -0.68, 0))
         p.rotation.z = s * 0.22
         g.add(p)
         arms.push(p)
@@ -1131,19 +1239,17 @@
       const legs = []
       for (const s of [-1, 1]) {
         const p = pivot(s * 0.3, 0.42, 0)
-        const leg = mesh(new THREE.CylinderGeometry(0.13, 0.12, 0.42, 12), toon(0x3c5c30), 0, -0.2, 0)
-        p.add(leg)
-        const boot = mesh(new THREE.SphereGeometry(0.17, 14, 14), toon(0x2f4d26), 0, -0.42, 0.06)
+        p.add(mesh(new THREE.CylinderGeometry(0.13, 0.12, 0.42, 8), toon(0x3c5c30), 0, -0.2, 0))
+        const boot = mesh(new THREE.SphereGeometry(0.17, 10, 10), toon(0x2f4d26), 0, -0.42, 0.06)
         boot.scale.set(1, 0.7, 1.35)
         p.add(boot)
         g.add(p)
         legs.push(p)
       }
 
-      return { group: g, arms, legs, head: null, tail: null }
+      return { group: g, arms, legs, head: null, tail: null, brows }
     }
 
-    // ---------- Advocat (white cat in a navy suit) ----------
     function buildAdvocat () {
       const g = new THREE.Group()
       const FUR = 0xf5f0e6
@@ -1153,22 +1259,21 @@
       const legs = []
       for (const s of [-1, 1]) {
         const p = pivot(s * 0.26, 0.62, 0)
-        const leg = mesh(new THREE.CylinderGeometry(0.14, 0.13, 0.6, 12), toon(SUIT), 0, -0.3, 0)
-        p.add(leg)
-        const foot = mesh(new THREE.SphereGeometry(0.16, 14, 14), toon(FUR), 0, -0.6, 0.07)
+        p.add(mesh(new THREE.CylinderGeometry(0.14, 0.13, 0.6, 10), toon(SUIT), 0, -0.3, 0))
+        const foot = mesh(new THREE.SphereGeometry(0.16, 10, 10), toon(FUR), 0, -0.6, 0.07)
         foot.scale.set(1, 0.65, 1.4)
         p.add(foot)
         g.add(p)
         legs.push(p)
       }
 
-      const torso = mesh(new THREE.CapsuleGeometry(0.5, 0.6, 8, 20), toon(SUIT), 0, 1.15, 0)
+      const torso = mesh(new THREE.CapsuleGeometry(0.5, 0.6, 6, 14), toon(SUIT), 0, 1.15, 0)
       torso.scale.set(1, 1, 0.82)
       g.add(torso)
       suitFront(g, 1.42, 0.5, 0xffffff, 0xc0392b, SUIT_DARK)
 
       const headPivot = pivot(0, 1.78, 0)
-      const head = mesh(new THREE.SphereGeometry(0.58, 32, 32), toon(FUR), 0, 0.3, 0)
+      const head = mesh(new THREE.SphereGeometry(0.58, 20, 20), toon(FUR), 0, 0.3, 0)
       head.scale.set(1.05, 0.95, 0.9)
       headPivot.add(head)
 
@@ -1187,10 +1292,9 @@
       headPivot.add(nose)
       smile(headPivot, 0.1, 0.55, 0.17, true)
 
-      const whiskerMat = toon(0x555555)
       for (const s of [-1, 1]) {
         for (let i = 0; i < 3; i++) {
-          const w = mesh(new THREE.CylinderGeometry(0.006, 0.006, 0.42, 4), whiskerMat, s * 0.55, 0.2 + i * 0.07, 0.46)
+          const w = mesh(new THREE.CylinderGeometry(0.006, 0.006, 0.42, 4), toon(0x555555), s * 0.55, 0.2 + i * 0.07, 0.46)
           w.rotation.z = s * (Math.PI / 2 - 0.12 + i * 0.12)
           headPivot.add(w)
         }
@@ -1200,10 +1304,8 @@
       const arms = []
       for (const s of [-1, 1]) {
         const p = pivot(s * 0.56, 1.42, 0)
-        const arm = mesh(new THREE.CapsuleGeometry(0.12, 0.46, 6, 12), toon(SUIT), 0, -0.3, 0)
-        p.add(arm)
-        const paw = mesh(new THREE.SphereGeometry(0.15, 14, 14), toon(FUR), 0, -0.62, 0)
-        p.add(paw)
+        p.add(mesh(new THREE.CapsuleGeometry(0.12, 0.46, 4, 8), toon(SUIT), 0, -0.3, 0))
+        p.add(mesh(new THREE.SphereGeometry(0.15, 10, 10), toon(FUR), 0, -0.62, 0))
         p.rotation.z = s * 0.18
         g.add(p)
         arms.push(p)
@@ -1216,278 +1318,517 @@
         new THREE.Vector3(0.55, 0.1, -0.45),
         new THREE.Vector3(0.7, 0.5, -0.4)
       ])
-      const tail = mesh(new THREE.TubeGeometry(tailCurve, 20, 0.075, 10), toon(FUR))
-      tailPivot.add(tail)
-      const tailTip = mesh(new THREE.SphereGeometry(0.09, 10, 10), toon(FUR), 0.7, 0.5, -0.4)
-      tailPivot.add(tailTip)
+      tailPivot.add(mesh(new THREE.TubeGeometry(tailCurve, 12, 0.075, 6), toon(FUR)))
+      tailPivot.add(mesh(new THREE.SphereGeometry(0.09, 8, 8), toon(FUR), 0.7, 0.5, -0.4))
       g.add(tailPivot)
 
       return { group: g, arms, legs, head: headPivot, tail: tailPivot }
     }
 
-    // ---------- Nyan Cat rainbow trails ----------
-    // The duo rides a rotating carousel, so in the carousel's local frame a
-    // trail is just a static arc sweeping back from each character along the
-    // orbit — the group rotation makes it stream behind them. Flat six-stripe
-    // meme rainbow with the classic blocky zigzag.
-    const trailShader = {
-      uniforms: {
-        uTime: { value: 0 },
-        uPulse: { value: 0 }
-      },
-      vertexShader: /* glsl */`
-        varying vec2 vUv;
-        void main () {
-          vUv = uv;
-          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-        }
-      `,
-      fragmentShader: /* glsl */`
-        uniform float uTime;
-        uniform float uPulse;
-        varying vec2 vUv;
+    function walkPose (char, ph, opts = {}) {
+      const swing = Math.sin(ph)
+      const swing2 = Math.sin(ph * 2)
+      const legAmp = opts.legAmp || 0.55
+      const armAmp = opts.armAmp || 0.45
+      const groove = Math.sin(ph * 0.5)
+      const grooveOff = Math.sin(ph * 0.5 + Math.PI / 3)
+      const grooveAmp = opts.grooveAmp == null ? 1 : opts.grooveAmp
+      const armRest = opts.armRest || 0.2
+      const baseY = opts.baseY || 0
 
-        void main () {
-          // whole band shifts up/down in big chunks — the nyan wiggle;
-          // pattern flows tail-ward so the rainbow reads as being emitted
-          float zig = (mod(floor(vUv.x * 6.0 + uTime * 1.2), 2.0) - 0.5) * 0.12;
-          float y = vUv.y + zig;
+      char.legs[0].rotation.x = swing * legAmp
+      char.legs[1].rotation.x = -swing * legAmp
+      char.arms[0].rotation.x = -swing * armAmp
+      char.arms[1].rotation.x = swing * armAmp
+      char.arms[0].rotation.z = -(armRest + Math.max(0, groove) * 0.4 * grooveAmp)
+      char.arms[1].rotation.z = armRest + Math.max(0, -groove) * 0.4 * grooveAmp
 
-          // stripes live in the middle of the geometry; the zigzag moves them
-          float inBand = step(0.18, y) * step(y, 0.82);
-          float s = clamp((0.82 - y) / 0.64, 0.0, 0.999);
-          float idx = floor(s * 6.0);
+      char.group.position.y = baseY + Math.abs(swing) * 0.07 + Math.abs(swing2) * 0.02 * grooveAmp
+      char.group.rotation.z = swing * 0.035 + groove * 0.06 * grooveAmp
+      // preserve facing yaw while walking
+      const faceY = opts.faceY != null ? opts.faceY : 0
+      char.group.rotation.y = faceY + swing * 0.045 + grooveOff * 0.09 * grooveAmp
 
-          vec3 col = vec3(1.0, 0.1, 0.1);            // red
-          if (idx > 0.5) col = vec3(1.0, 0.6, 0.0);  // orange
-          if (idx > 1.5) col = vec3(1.0, 1.0, 0.0);  // yellow
-          if (idx > 2.5) col = vec3(0.2, 1.0, 0.1);  // green
-          if (idx > 3.5) col = vec3(0.0, 0.6, 1.0);  // blue
-          if (idx > 4.5) col = vec3(0.45, 0.25, 1.0);// violet
-
-          // u runs tail (0) → head (1): fade out toward the tail
-          float fade = smoothstep(0.1, 0.75, vUv.x);
-          float alpha = inBand * fade * 0.9;
-          // keep the stripes readable — too bright and bloom melts them white
-          col *= 0.55 + 0.25 * uPulse;
-
-          if (alpha < 0.01) discard;
-          gl_FragColor = vec4(col, alpha);
-        }
-      `
+      if (char.head && !opts.lockHead) {
+        char.head.rotation.z = swing * 0.06 + groove * 0.12
+        char.head.rotation.x = swing2 * 0.02 - Math.abs(groove) * 0.08
+      }
+      if (char.tail) {
+        char.tail.rotation.y = Math.sin(ph * 0.7) * 0.5
+        char.tail.rotation.x = Math.sin(ph * 1.3) * 0.15
+      }
     }
 
-    function buildTrail (charX, charZ) {
-      const LEN = 4.2
-      const mat = new THREE.ShaderMaterial({
-        uniforms: THREE.UniformsUtils.clone(trailShader.uniforms),
-        vertexShader: trailShader.vertexShader,
-        fragmentShader: trailShader.fragmentShader,
-        transparent: true,
-        depthWrite: false,
-        side: THREE.DoubleSide
-      })
-      // straight flat banner like the meme; head (u = 1) tucked just behind
-      // the body, streaming out toward -x as the characters fly +x
-      const geo = new THREE.PlaneGeometry(LEN, 0.9, 1, 1)
-      geo.translate(-LEN / 2 - 0.45, 0, 0)
-      const m = new THREE.Mesh(geo, mat)
-      m.position.set(charX, 0, charZ)
-      return { mesh: m, mat }
-    }
+    // ---------- Crowd of Advocados — backs to camera; brows dance on frequency ----------
+    const COLS = 14
+    const ROWS = 19
+    const army = []
+    const armyRoot = new THREE.Group()
+    scene.add(armyRoot)
+    const rowEnergy = new Float32Array(ROWS)
 
-    // ---------- Assemble: formation flight toward +x ----------
-    // Both characters face the same way, staggered in depth and height,
-    // rainbows streaming out behind them like the meme.
-    const duo = new THREE.Group()
-    scene.add(duo)
-
-    const advocado = buildAdvocado()
-    advocado.group.position.set(-0.9, 0, 0.9)
-    duo.add(advocado.group)
+    // mid-crowd Advocat faces camera; everyone else shows their back
+    const SPACING = 1.05
+    const FACING_ROW = 9
+    const midZ = -0.2 - FACING_ROW * SPACING
+    const catPos = { x: 0, z: midZ }
+    const PAIR_CLEAR = 1.35 // keep other bodies out of Advocat's bubble
 
     const advocat = buildAdvocat()
-    advocat.group.position.set(1.1, 0, -0.9)
-    duo.add(advocat.group)
+    advocat.group.position.set(catPos.x, 0, catPos.z)
+    advocat.group.rotation.y = 0 // face +z toward camera
+    advocat.group.scale.setScalar(0.95)
+    advocat.head.rotation.x = 0.02
+    advocat.group.rotation.x = 0
+    // unique materials so army FX (grayscale / opacity) never tint the cat
+    advocat.group.traverse(obj => {
+      if (!obj.isMesh || !obj.material) return
+      if (Array.isArray(obj.material)) {
+        obj.material = obj.material.map(m => m.clone())
+      } else {
+        obj.material = obj.material.clone()
+      }
+    })
+    scene.add(advocat.group)
 
-    const trailA = buildTrail(-0.9, 0.9)
-    duo.add(trailA.mesh)
-    const trailB = buildTrail(1.1, -0.9)
-    duo.add(trailB.mesh)
+    for (let row = 0; row < ROWS; row++) {
+      for (let col = 0; col < COLS; col++) {
+        const soldier = buildAdvocado()
+        let x = (col - (COLS - 1) / 2) * SPACING + (Math.random() - 0.5) * 0.85
+        let z = -0.2 - row * SPACING + (Math.random() - 0.5) * 0.75
+        // shove out of Advocat's bubble so the cat face stays clear
+        const dx = x - catPos.x
+        const dz = z - catPos.z
+        const d = Math.hypot(dx, dz)
+        if (d < PAIR_CLEAR && d > 0.001) {
+          const s = PAIR_CLEAR / d
+          x = catPos.x + dx * s
+          z = catPos.z + dz * s
+        } else if (d < PAIR_CLEAR) {
+          x = catPos.x + PAIR_CLEAR
+        }
+        const baseScale = 0.72 + Math.random() * 0.18
+        soldier.group.position.set(x, 0, z)
+        // backs toward camera (face -z); yaw variance for organic look
+        soldier.faceY = Math.PI + (Math.random() - 0.5) * 0.55
+        soldier.group.rotation.y = soldier.faceY
+        soldier.group.scale.setScalar(baseScale)
+        soldier.phase = Math.random() * Math.PI * 2
+        soldier.baseY = 0
+        soldier.baseScale = baseScale
+        soldier.bandRow = row // near = lows, far = highs → eyebrows
+        soldier.bandSmooth = 0
+        armyRoot.add(soldier.group)
+        army.push(soldier)
+      }
+    }
 
-    // soft glow per character, tinted by the current chord
-    const glowA = new THREE.PointLight(0xffffff, 1.2, 7, 1.6)
-    glowA.position.set(-0.9, 2.0, 0.9)
-    duo.add(glowA)
-    const glowB = new THREE.PointLight(0xffffff, 1.2, 7, 1.6)
-    glowB.position.set(1.1, 2.6, -0.9)
-    duo.add(glowB)
+    // ---------- Falling cash stacks (sky) — Dollar FBX ----------
+    const fallingRoot = new THREE.Group()
+    scene.add(fallingRoot)
+    const falling = []
+    let dollarTemplate = null
 
-    // ---------- Camera director ----------
-    // Default: medium front-left home frame (the formation portrait shot).
-    // Hold 1 / 6 / 9 to dig into advocado / advocat / both.
-    // Snare ratchets / arrows shuffle yaw / elev / distance around the look target.
-    const HOME_POS = new THREE.Vector3(6.46, 11.636, 13.096)
-    const HOME_LOOK = new THREE.Vector3(0.15, 2.1, 0)
-    const camPos = HOME_POS.clone()
-    const camLook = HOME_LOOK.clone()
-    const camWantPos = new THREE.Vector3()
-    const camWantLook = new THREE.Vector3()
-    const faceA = new THREE.Vector3()
-    const faceB = new THREE.Vector3()
-    let yawSmooth = 0
-    let elevSmooth = 0
-    let distSmooth = 0
+    function applyDollarTextures (root, frontTex, backTex) {
+      root.traverse(obj => {
+        if (!obj.isMesh || !obj.material) return
+        const mats = Array.isArray(obj.material) ? obj.material : [obj.material]
+        const meshName = (obj.name || '').toLowerCase()
+        mats.forEach((m, i) => {
+          if (!m) return
+          const matName = (m.name || '').toLowerCase()
+          const hint = meshName + ' ' + matName
+          let map = frontTex
+          if (hint.includes('back') || i === 1) map = backTex
+          else if (hint.includes('front') || i === 0) map = frontTex
+          m.map = map
+          if (m.color) m.color.set(0xffffff)
+          m.side = THREE.DoubleSide
+          m.transparent = false
+          m.needsUpdate = true
+        })
+        obj.castShadow = false
+        obj.receiveShadow = false
+      })
+    }
 
-    camera.position.copy(camPos)
-    camera.lookAt(camLook)
+    function normalizeDollar (fbx, frontTex, backTex) {
+      applyDollarTextures(fbx, frontTex, backTex)
+      const wrap = new THREE.Group()
+      wrap.add(fbx)
+      const box = new THREE.Box3().setFromObject(fbx)
+      const center = box.getCenter(new THREE.Vector3())
+      fbx.position.sub(center)
+      const size = box.getSize(new THREE.Vector3())
+      const maxDim = Math.max(size.x, size.y, size.z) || 1
+      wrap.userData.baseScale = 1.35 / maxDim
+      wrap.scale.setScalar(wrap.userData.baseScale)
+      return wrap
+    }
 
-    function applyViewNudge (pos, look, yaw, elev, dist) {
-      // pull along the camera→look axis first (dolly), then orbit yaw, then lift
-      const dx = pos.x - look.x
-      const dy = pos.y - look.y
-      const dz = pos.z - look.z
-      const len = Math.hypot(dx, dy, dz) || 1
-      const scale = Math.max(0.55, (len + dist) / len)
-      pos.x = look.x + dx * scale
-      pos.y = look.y + dy * scale
-      pos.z = look.z + dz * scale
+    function respawnFalling (f) {
+      f.pos.set(
+        (Math.random() - 0.5) * 70,
+        26 + Math.random() * 32,
+        -28 - Math.random() * 50
+      )
+      const speed = 3.0 + Math.random() * 4.2
+      f.vel.set(
+        (Math.random() - 0.4) * 3.2,
+        -speed * (0.75 + Math.random() * 0.35),
+        (Math.random() - 0.5) * 2.2 - 1.0
+      )
+      f.spin.set(
+        (Math.random() - 0.5) * 1.6,
+        (Math.random() - 0.5) * 2.2,
+        (Math.random() - 0.5) * 1.6
+      )
+      f.scale = 1.4 + Math.random() * 1.5
+      const s = (f.baseScale || 1) * f.scale
+      f.group.scale.setScalar(s)
+      f.group.rotation.set(
+        Math.random() * Math.PI * 2,
+        Math.random() * Math.PI * 2,
+        Math.random() * Math.PI * 2
+      )
+      f.wait = 0
+      f.group.visible = true
+      f.group.position.copy(f.pos)
+    }
 
-      const ox = pos.x - look.x
-      const oz = pos.z - look.z
-      const c = Math.cos(yaw)
-      const s = Math.sin(yaw)
-      pos.x = look.x + ox * c - oz * s
-      pos.z = look.z + ox * s + oz * c
-      pos.y += elev
+    // Fast-forward along the fall so the sky is already raining
+    function seedFallingMidAir (f) {
+      respawnFalling(f)
+      const age = 1.5 + Math.random() * 7
+      f.pos.x += f.vel.x * age
+      f.pos.y += f.vel.y * age
+      f.pos.z += f.vel.z * age
+      f.group.rotation.x += f.spin.x * age
+      f.group.rotation.y += f.spin.y * age
+      f.group.rotation.z += f.spin.z * age
+      if (f.pos.y < -8 || f.pos.z > 12) {
+        // re-roll near the top if we overshot
+        respawnFalling(f)
+        const shortAge = Math.random() * 2.5
+        f.pos.x += f.vel.x * shortAge
+        f.pos.y += f.vel.y * shortAge
+        f.pos.z += f.vel.z * shortAge
+      }
+      f.group.position.copy(f.pos)
+    }
+
+    function spawnFallingCash (template) {
+      const baseScale = template.userData.baseScale || 1
+      const COUNT = 48
+      for (let i = 0; i < COUNT; i++) {
+        const group = template.clone(true)
+        group.scale.setScalar(baseScale)
+        fallingRoot.add(group)
+        const f = {
+          group,
+          baseScale,
+          pos: new THREE.Vector3(),
+          vel: new THREE.Vector3(),
+          spin: new THREE.Vector3(),
+          wait: 0,
+          scale: 2
+        }
+        seedFallingMidAir(f)
+        falling.push(f)
+      }
+    }
+
+    ;(async () => {
+      const manager = new THREE.LoadingManager()
+      manager.setURLModifier(url => {
+        let u = String(url).replace(/\\/g, '/')
+        const lower = u.toLowerCase()
+        if (lower.includes('front.jpg')) return './assets/dollar/texture/front.jpg'
+        if (lower.includes('back.jpg')) return './assets/dollar/texture/back.jpg'
+        return u
+      })
+
+      const texLoader = new THREE.TextureLoader(manager)
+      const fbxLoader = new FBXLoader(manager)
+      fbxLoader.setResourcePath('./assets/dollar/')
+
+      const [frontTex, backTex, fbx] = await Promise.all([
+        texLoader.loadAsync('./assets/dollar/texture/front.jpg'),
+        texLoader.loadAsync('./assets/dollar/texture/back.jpg'),
+        fbxLoader.loadAsync('./assets/dollar/untitled.fbx')
+      ])
+
+      // FBX UVs expect unflipped maps
+      frontTex.colorSpace = THREE.SRGBColorSpace
+      backTex.colorSpace = THREE.SRGBColorSpace
+      frontTex.flipY = false
+      backTex.flipY = false
+      frontTex.needsUpdate = true
+      backTex.needsUpdate = true
+
+      dollarTemplate = normalizeDollar(fbx, frontTex, backTex)
+      spawnFallingCash(dollarTemplate)
+      if (typeof collectWorldMats === 'function') collectWorldMats()
+    })().catch(err => console.error('Dollar FBX load failed', err))
+
+    function updateFalling (dt) {
+      const stage = window.stage
+      if (!stage || !stage.started || !stage.playing) return
+      for (let i = 0; i < falling.length; i++) {
+        const f = falling[i]
+        if (f.wait > 0) {
+          f.wait -= dt
+          if (f.wait <= 0) f.group.visible = true
+          continue
+        }
+        f.pos.x += f.vel.x * dt
+        f.pos.y += f.vel.y * dt
+        f.pos.z += f.vel.z * dt
+        f.group.position.copy(f.pos)
+        f.group.rotation.x += f.spin.x * dt
+        f.group.rotation.y += f.spin.y * dt
+        f.group.rotation.z += f.spin.z * dt
+        if (f.pos.y < -8 || f.pos.z > 12) respawnFalling(f)
+      }
+    }
+
+    function updateRowEnergy () {
+      if (!spectrum || !spectrumData) {
+        rowEnergy.fill(0)
+        return
+      }
+      spectrum.getByteFrequencyData(spectrumData)
+      const n = spectrumData.length
+      const usable = Math.floor(n * 0.78)
+      for (let row = 0; row < ROWS; row++) {
+        const t0 = row / ROWS
+        const t1 = (row + 1) / ROWS
+        // gentler curve so front (bass) rows cover a real low band, not a tiny slice
+        const i0 = Math.max(1, Math.floor(Math.pow(t0, 1.15) * usable))
+        const i1 = Math.max(i0 + 3, Math.floor(Math.pow(t1, 1.15) * usable))
+        let sum = 0
+        let peak = 0
+        for (let i = i0; i < i1; i++) {
+          const v = spectrumData[i]
+          sum += v
+          if (v > peak) peak = v
+        }
+        const avg = sum / ((i1 - i0) * 255)
+        const p = peak / 255
+        // lift lows — kick/bass often read quieter after the FX chain
+        const bassLift = 1.55 - (row / Math.max(1, ROWS - 1)) * 0.7
+        let e = (avg * 0.5 + p * 0.7) * bassLift
+        // soft noise gate so idle hush doesn't twitch
+        if (e < 0.06) e = 0
+        rowEnergy[row] = Math.min(1, e)
+      }
     }
 
     // ---------- Animation ----------
     const tclock = new THREE.Clock()
-    let t = 0       // wall/scene time (camera parallax)
-    let flyT = 0    // animation clock — races ahead during flyBoost
+    let phase = 0
     let pulseSmooth = 0
-    let hueSmooth = window.stage.hue
-    let boostSmooth = 0
-    const ringColor = new THREE.Color()
+    const camHome = new THREE.Vector3(-2.404, 2.646, -1.498)
+    const camLook = new THREE.Vector3(0.275, 0.921, -11.218)
+    const camPos = camHome.clone()
+    const camLookCur = camLook.clone()
 
-    function levitate (char, time, opts) {
-      const boost = opts.boost || 0
-      const bobAmp = 0.17 + boost * 0.1
-      const bob = Math.sin(time * opts.bobSpeed + opts.phase)
-      char.group.position.y = opts.height + bob * bobAmp
-      // nyan pose: face +x and lean into the flight. ZYX order makes the
-      // z rotation act in world space, tipping the top toward +x.
-      // boost digs the lean in so they look like they're going faster
-      char.group.rotation.order = 'ZYX'
-      char.group.rotation.y = opts.face + Math.sin(time * 0.4 + opts.phase) * (0.08 + boost * 0.06)
-      char.group.rotation.z = opts.lean - boost * 0.28 + Math.sin(time * 0.5 + opts.phase) * 0.05
-      char.group.rotation.x = Math.sin(time * 0.31 + opts.phase) * (0.04 + boost * 0.04)
+    // Zoom target — Advocat face
+    const camZoomPos = new THREE.Vector3(catPos.x + 0.05, 1.95, catPos.z + 2.55)
+    const camZoomLook = new THREE.Vector3(catPos.x, 1.82, catPos.z)
 
-      // limbs thrash harder when boosted
-      const limb = 1 + boost * 1.6
-      char.legs[0].rotation.x = 0.3 + Math.sin(time * 1.6 + opts.phase) * 0.09 * limb
-      char.legs[1].rotation.x = 0.2 + Math.sin(time * 1.6 + 1.4 + opts.phase) * 0.09 * limb
-      char.arms[0].rotation.z = -(0.5 + Math.sin(time * 1.1 + opts.phase) * 0.14 * limb)
-      char.arms[1].rotation.z = 0.5 + Math.sin(time * 1.1 + 0.8 + opts.phase) * 0.14 * limb
-      char.arms[0].rotation.x = Math.sin(time * 0.9 + opts.phase) * 0.18 * limb
-      char.arms[1].rotation.x = Math.sin(time * 0.9 + 2.1 + opts.phase) * 0.18 * limb
+    const SKY_COLOR = new THREE.Color(SKY)
+    const _hsl = { h: 0, s: 0, l: 0 }
+    SKY_COLOR.getHSL(_hsl)
+    const SKY_GRAY = new THREE.Color().setHSL(0, 0, _hsl.l)
+    const hemiSky = hemi.color.clone()
+    const hemiGround = hemi.groundColor.clone()
+    const sunCol = sun.color.clone()
+    const fillCol = fill.color.clone()
+    hemiSky.getHSL(_hsl)
+    const hemiSkyG = new THREE.Color().setHSL(0, 0, _hsl.l)
+    hemiGround.getHSL(_hsl)
+    const hemiGroundG = new THREE.Color().setHSL(0, 0, _hsl.l)
+    sunCol.getHSL(_hsl)
+    const sunColG = new THREE.Color().setHSL(0, 0, _hsl.l)
+    fillCol.getHSL(_hsl)
+    const fillColG = new THREE.Color().setHSL(0, 0, _hsl.l)
 
-      if (char.head) {
-        char.head.rotation.z = Math.sin(time * 0.7 + opts.phase) * 0.08 * limb
-        char.head.rotation.x = -0.06 + Math.sin(time * 0.5) * 0.05
-      }
-      if (char.tail) {
-        char.tail.rotation.y = Math.sin(time * 0.8) * 0.5 * limb
-        char.tail.rotation.x = Math.sin(time * 1.4) * 0.18 * limb
+    let grayAmt = 0
+    let zoomAmt = 0
+    let crowdHidden = false
+
+    // key-9 visual stutter — loops a short phase window like bend.repeat
+    const stutter = { on: false, anchor: 0, t: 0, slice: 0.12, rate: 1 }
+
+    function rememberMatColor (m) {
+      if (!m || !m.color) return
+      if (!m.userData._rgb) m.userData._rgb = m.color.clone()
+    }
+
+    function applyGrayToMat (m, amt) {
+      if (!m || !m.color) return
+      rememberMatColor(m)
+      const c = m.userData._rgb
+      const g = 0.299 * c.r + 0.587 * c.g + 0.114 * c.b
+      m.color.setRGB(
+        c.r + (g - c.r) * amt,
+        c.g + (g - c.g) * amt,
+        c.b + (g - c.b) * amt
+      )
+    }
+
+    function forWorldMats (fn) {
+      const roots = [armyRoot, fallingRoot, ground]
+      for (let r = 0; r < roots.length; r++) {
+        roots[r].traverse(obj => {
+          if (!obj.isMesh || !obj.material) return
+          const mats = Array.isArray(obj.material) ? obj.material : [obj.material]
+          for (let i = 0; i < mats.length; i++) fn(mats[i])
+        })
       }
     }
 
-    function updateTrail (trail, time, charY, boost) {
-      trail.mat.uniforms.uTime.value = time
-      trail.mat.uniforms.uPulse.value = Math.min(1, pulseSmooth + boost * 0.5)
-      // banner streams out at body height, riding the character's bob
-      trail.mesh.position.y = charY + 1.2
-      // stretch the trail a touch when they accelerate
-      trail.mesh.scale.x = 1 + boost * 0.45
+    // cache shared world mats (army / cash / floor) — never includes Advocat
+    const worldMats = new Set()
+    function collectWorldMats () {
+      worldMats.clear()
+      forWorldMats(m => worldMats.add(m))
     }
+    collectWorldMats()
 
-    function faceHeight (char, out) {
-      char.group.getWorldPosition(out)
-      out.y += 1.55
+    function setCrowdVisible (on) {
+      crowdHidden = !on
+      armyRoot.visible = on
+      fallingRoot.visible = on
     }
 
     function animate () {
       requestAnimationFrame(animate)
       const dt = Math.min(tclock.getDelta(), 0.1)
       const stage = window.stage
+      const leet = stage.leet
+      const playing = stage.started && stage.playing
 
-      // only advance the choreography while the music plays
-      const running = stage.started && stage.playing
-      if (running) {
-        t += dt
-        // decay the ratchet speed spike, animate on the boosted clock
-        stage.flyBoost *= Math.exp(-dt * 1.7)
-        boostSmooth += (stage.flyBoost - boostSmooth) * (1 - Math.exp(-dt * 8))
-        flyT += dt * (1 + boostSmooth * 2.6)
+      grayAmt += ((leet === '1' ? 1 : 0) - grayAmt) * Math.min(1, dt / 0.16)
+      zoomAmt += ((leet === '6' ? 1 : 0) - zoomAmt) * Math.min(1, dt / 0.22)
+
+      // key 6 — hide avocados/cash entirely (skip draw) instead of transparent mats
+      const wantCrowd = leet !== '6'
+      if (wantCrowd === crowdHidden) setCrowdVisible(wantCrowd)
+
+      // world (not cat) grayscale
+      worldMats.forEach(m => {
+        applyGrayToMat(m, grayAmt)
+      })
+
+      scene.background.lerpColors(SKY_COLOR, SKY_GRAY, grayAmt)
+      scene.fog.color.copy(scene.background)
+      hemi.color.lerpColors(hemiSky, hemiSkyG, grayAmt)
+      hemi.groundColor.lerpColors(hemiGround, hemiGroundG, grayAmt)
+      sun.color.lerpColors(sunCol, sunColG, grayAmt)
+      fill.color.lerpColors(fillCol, fillColG, grayAmt)
+
+      const pace = (playing ? stage.bpm / 84 : 0) * stage.walkMult
+
+      // continuous phase vs stuttered phase (mirrors audio bend slice/rate)
+      let animPhase = phase
+      if (leet === '9' && playing) {
+        if (!stutter.on) {
+          stutter.on = true
+          stutter.anchor = phase
+          stutter.t = 0
+          stutter.slice = Math.max(0.04, stage.stutterSlice || 0.12)
+          stutter.rate = stage.stutterRate || 1
+        }
+        stutter.t += dt * Math.abs(stutter.rate)
+        while (stutter.t >= stutter.slice) stutter.t -= stutter.slice
+        const local = stutter.rate < 0 ? (stutter.slice - stutter.t) : stutter.t
+        animPhase = stutter.anchor + local * 4.6 * Math.max(0.35, pace || 1)
+        // freeze treadmill / cash progress to the stutter clock
+      } else {
+        if (stutter.on) {
+          phase = animPhase
+          stutter.on = false
+        }
+        phase += dt * 4.6 * pace
+        animPhase = phase
       }
 
-      // decay the kick pulse; smooth the chord hue
       stage.pulse *= Math.exp(-dt * 5)
       stage.snap *= Math.exp(-dt * 6)
       pulseSmooth += (Math.max(stage.pulse, stage.snap * 0.6) - pulseSmooth) * 0.35
-      let dh = stage.hue - hueSmooth
-      if (dh > 0.5) dh -= 1
-      if (dh < -0.5) dh += 1
-      hueSmooth = (hueSmooth + dh * dt * 2 + 1) % 1
 
-      // yawed toward the camera so faces read in the home portrait frame
-      levitate(advocado, flyT, { height: 1.3, bobSpeed: 0.9, phase: 0, face: Math.PI / 2 - 0.55, lean: -0.22, boost: boostSmooth })
-      levitate(advocat, flyT, { height: 1.9, bobSpeed: 0.9, phase: Math.PI * 0.7, face: Math.PI / 2 - 0.55, lean: -0.22, boost: boostSmooth })
-
-      updateTrail(trailA, flyT, advocado.group.position.y, boostSmooth)
-      updateTrail(trailB, flyT, advocat.group.position.y, boostSmooth)
-
-      ringColor.setHSL(hueSmooth, 0.5, 0.62)
-      glowA.color.copy(ringColor)
-      glowB.color.copy(ringColor)
-      glowA.intensity = glowB.intensity = 0.6 + pulseSmooth * 1.2
-
-      faceHeight(advocado, faceA)
-      faceHeight(advocat, faceB)
-
-      const focus = stage.focus
-      if (focus === 'advocado') {
-        camWantLook.copy(faceA)
-        camWantPos.set(faceA.x + 0.6, faceA.y + 0.35, faceA.z + 4.6)
-      } else if (focus === 'advocat') {
-        camWantLook.copy(faceB)
-        camWantPos.set(faceB.x + 0.6, faceB.y + 0.35, faceB.z + 4.6)
-      } else if (focus === 'both') {
-        camWantLook.lerpVectors(faceA, faceB, 0.5)
-        camWantPos.set(camWantLook.x + Math.sin(t * 0.07) * 0.4, camWantLook.y + 0.9, 8.2)
-      } else {
-        // wide formation home shot with a gentle parallax drift
-        camWantPos.set(
-          Math.sin(t * 0.07) * 1.8,
-          3.6 + Math.sin(t * 0.1) * 0.6,
-          13.5
-        )
-        camWantLook.set(0, 2.0, 0)
+      // Advocat idle — facing camera from mid-crowd
+      const breath = Math.sin(animPhase * 0.35) * 0.025
+      advocat.group.position.y = breath
+      advocat.head.rotation.x = 0.02 + Math.sin(animPhase * 0.25) * 0.03
+      advocat.arms[0].rotation.z = -0.22
+      advocat.arms[1].rotation.z = 0.22
+      advocat.arms[0].rotation.x = 0.08
+      advocat.arms[1].rotation.x = 0.08
+      if (advocat.tail) {
+        advocat.tail.rotation.y = Math.sin(animPhase * 0.4) * 0.2
       }
 
-      // snare-ratchet shuffle: yaw / elev / dist ease toward the new cut
-      const ease = 1 - Math.exp(-dt * 3.5)
-      yawSmooth += (stage.viewYaw - yawSmooth) * ease
-      elevSmooth += (stage.viewElev - elevSmooth) * ease
-      distSmooth += (stage.viewDist - distSmooth) * ease
-      applyViewNudge(camWantPos, camWantLook, yawSmooth, elevSmooth, distSmooth)
+      // Crowd: original march; eyebrows bounce on their frequency band
+      // (skip when hidden for key 6)
+      if (armyRoot.visible) {
+        updateRowEnergy()
+        for (let i = 0; i < army.length; i++) {
+          const s = army[i]
+          const ph = animPhase + s.phase
+          walkPose(s, ph, {
+            legAmp: playing ? 0.48 : 0.12,
+            armAmp: playing ? 0.38 : 0.1,
+            armRest: playing ? 0.2 : 0.15,
+            grooveAmp: playing ? 0.85 : 0.25,
+            baseY: s.baseY,
+            faceY: s.faceY
+          })
+          s.group.scale.setScalar(s.baseScale)
 
-      const camSpeed = focus ? 0.16 : 0.07
-      camPos.lerp(camWantPos, 1 - Math.exp(-dt * camSpeed * 60))
-      camLook.lerp(camWantLook, 1 - Math.exp(-dt * camSpeed * 60))
-      camera.position.copy(camPos)
-      camera.lookAt(camLook)
+          if (s.brows && s.brows.length) {
+            let e = 0
+            if (playing) {
+              e = Math.pow(Math.max(0, rowEnergy[s.bandRow]), 1.1)
+              s.bandSmooth += (e - s.bandSmooth) * 0.3
+            } else {
+              s.bandSmooth *= 0.88
+            }
+            const b = s.bandSmooth
+            const flutter = Math.sin(ph * 5.5) * 0.02 * (0.25 + b)
+            for (let bi = 0; bi < s.brows.length; bi++) {
+              const brow = s.brows[bi]
+              const side = brow.userData.side
+              brow.position.y = brow.userData.baseY + b * 0.07 + flutter
+              brow.rotation.z = brow.userData.baseRotZ - side * (b * 0.45 + flutter * 2)
+            }
+          }
+        }
+      }
+
+      // floor / cash: advance only when not stuttering; while stuttering, freeze motion
+      if (leet !== '9') {
+        groundTex.offset.y += dt * 0.42 * pace
+        updateFalling(dt)
+      }
+
+      // camera: home idle sway, or zoom to cat face on 6
+      const t = animPhase * 0.06
+      const homePos = new THREE.Vector3(
+        camHome.x + Math.sin(t) * 0.12,
+        camHome.y + Math.sin(t * 0.7) * 0.05,
+        camHome.z + Math.cos(t * 0.5) * 0.1
+      )
+      camPos.lerpVectors(homePos, camZoomPos, zoomAmt)
+      camLookCur.lerpVectors(camLook, camZoomLook, zoomAmt)
+      const camEase = 1 - Math.exp(-dt * (2.4 + zoomAmt * 4))
+      camera.position.lerp(camPos, camEase)
+      camera.lookAt(camLookCur)
+
+      // pink world pulse with the kick — subtle light lift
+      hemi.intensity = 1.05 + pulseSmooth * 0.15
 
       composer.render()
     }
