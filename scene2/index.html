@@ -111,7 +111,8 @@
       snap: 0,
       hue: 0,
       walkMult: 1,
-      leet: null, // null | '1' | '6' | '9'
+      // hold-stackable FX — true while that key is down
+      leets: { '1': false, '6': false, '9': false },
       stutterSlice: 0.12,
       stutterRate: 1
     }
@@ -154,7 +155,7 @@
     let spectrumData = null
     const DRUMS_GAIN = 0.72
     let bar = 0
-    let heldLeet = null
+    let heldLeets = new Set()
     const FX_ENV = 0.16
     const LP_OPEN = 12000
     const LP_CLOSED = 260
@@ -382,7 +383,7 @@
     }
 
     function duck (time, vel) {
-      if (!duckBus || heldLeet === '6') return
+      if (!duckBus || heldLeets.has('6')) return
       duckParam(duckBus.gainParam, 1, 1 - 0.32 * vel, time)
       duckParam(drumsBus.gainParam, DRUMS_GAIN, 1 - 0.12 * vel, time)
     }
@@ -400,13 +401,18 @@
       if (el) el.classList.toggle('hit', on)
     }
 
+    function syncLeetStage () {
+      window.stage.leets['1'] = heldLeets.has('1')
+      window.stage.leets['6'] = heldLeets.has('6')
+      window.stage.leets['9'] = heldLeets.has('9')
+    }
+
     function pressLeet (digit) {
       if (!window.stage.started || !window.stage.playing) return
       if (digit !== '1' && digit !== '6' && digit !== '9') return
-      if (heldLeet === digit) return
-      if (heldLeet) releaseLeet()
-      heldLeet = digit
-      window.stage.leet = digit
+      if (heldLeets.has(digit)) return
+      heldLeets.add(digit)
+      syncLeetStage()
       setKeyHit('.key[data-say="' + digit + '"]', true)
       const now = peril.CONTEXT.currentTime
 
@@ -434,12 +440,15 @@
       }
     }
 
-    function releaseLeet () {
-      if (!heldLeet) return
-      const digit = heldLeet
+    function releaseLeet (digit) {
+      if (!digit) {
+        ;['1', '6', '9'].forEach(d => releaseLeet(d))
+        return
+      }
+      if (!heldLeets.has(digit)) return
+      heldLeets.delete(digit)
+      syncLeetStage()
       setKeyHit('.key[data-say="' + digit + '"]', false)
-      heldLeet = null
-      window.stage.leet = null
       const now = peril.CONTEXT ? peril.CONTEXT.currentTime : 0
 
       if (digit === '1') {
@@ -736,9 +745,9 @@
 
     addEventListener('keyup', (e) => {
       if (e.key === '1' || e.key === '6' || e.key === '9') {
-        if (heldLeet === e.key) {
+        if (heldLeets.has(e.key)) {
           e.preventDefault()
-          releaseLeet()
+          releaseLeet(e.key)
         }
       }
     })
@@ -752,9 +761,9 @@
         btn.setPointerCapture(e.pointerId)
         pressLeet(digit)
       })
-      btn.addEventListener('pointerup', () => releaseLeet())
-      btn.addEventListener('pointercancel', () => releaseLeet())
-      btn.addEventListener('lostpointercapture', () => releaseLeet())
+      btn.addEventListener('pointerup', () => releaseLeet(digit))
+      btn.addEventListener('pointercancel', () => releaseLeet(digit))
+      btn.addEventListener('lostpointercapture', () => releaseLeet(digit))
     })
 
     async function startPerformance () {
@@ -965,9 +974,10 @@
         leadBus.setOutput(mixBus)
         drumsBus.setOutput(mixBus)
         bass.output.setOutput(mixBus)
-        mixBus.setOutput(fxLp)
-        fxLp.setOutput(bend)
-        bend.setOutput(tape)
+        // bend (9) before fxLp (1) so stuttered audio still gets the lowpass
+        mixBus.setOutput(bend)
+        bend.setOutput(fxLp)
+        fxLp.setOutput(tape)
         tape.setOutput(delay)
         delay.setOutput(reverb)
         reverb.setOutput(mud)
@@ -1707,14 +1717,14 @@
       requestAnimationFrame(animate)
       const dt = Math.min(tclock.getDelta(), 0.1)
       const stage = window.stage
-      const leet = stage.leet
+      const leets = stage.leets || {}
       const playing = stage.started && stage.playing
 
-      grayAmt += ((leet === '1' ? 1 : 0) - grayAmt) * Math.min(1, dt / 0.16)
-      zoomAmt += ((leet === '6' ? 1 : 0) - zoomAmt) * Math.min(1, dt / 0.22)
+      grayAmt += ((leets['1'] ? 1 : 0) - grayAmt) * Math.min(1, dt / 0.16)
+      zoomAmt += ((leets['6'] ? 1 : 0) - zoomAmt) * Math.min(1, dt / 0.22)
 
       // key 6 — hide avocados/cash entirely (skip draw) instead of transparent mats
-      const wantCrowd = leet !== '6'
+      const wantCrowd = !leets['6']
       if (wantCrowd === crowdHidden) setCrowdVisible(wantCrowd)
 
       // world (not cat) grayscale
@@ -1733,7 +1743,7 @@
 
       // continuous phase vs stuttered phase (mirrors audio bend slice/rate)
       let animPhase = phase
-      if (leet === '9' && playing) {
+      if (leets['9'] && playing) {
         if (!stutter.on) {
           stutter.on = true
           stutter.anchor = phase
@@ -1809,7 +1819,7 @@
       }
 
       // floor / cash: advance only when not stuttering; while stuttering, freeze motion
-      if (leet !== '9') {
+      if (!leets['9']) {
         groundTex.offset.y += dt * 0.42 * pace
         updateFalling(dt)
       }
