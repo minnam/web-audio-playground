@@ -1741,27 +1741,26 @@
 
       const pace = (playing ? stage.bpm / 84 : 0) * stage.walkMult
 
-      // continuous phase vs stuttered phase (mirrors audio bend slice/rate)
+      // real playhead always advances — stutter only wraps the displayed phase
+      phase += dt * 4.6 * pace
       let animPhase = phase
       if (leets['9'] && playing) {
         if (!stutter.on) {
           stutter.on = true
           stutter.anchor = phase
-          stutter.t = 0
           stutter.slice = Math.max(0.04, stage.stutterSlice || 0.12)
           stutter.rate = stage.stutterRate || 1
+          // phase-units spanned by one audio slice at current pace
+          stutter.slicePh = stutter.slice * 4.6 * Math.max(0.35, pace || 1)
         }
-        stutter.t += dt * Math.abs(stutter.rate)
-        while (stutter.t >= stutter.slice) stutter.t -= stutter.slice
-        const local = stutter.rate < 0 ? (stutter.slice - stutter.t) : stutter.t
-        animPhase = stutter.anchor + local * 4.6 * Math.max(0.35, pace || 1)
-        // freeze treadmill / cash progress to the stutter clock
-      } else {
-        if (stutter.on) {
-          phase = animPhase
-          stutter.on = false
-        }
-        phase += dt * 4.6 * pace
+        const span = Math.max(0.001, stutter.slicePh)
+        let local = (phase - stutter.anchor) * Math.abs(stutter.rate)
+        local = ((local % span) + span) % span
+        if (stutter.rate < 0) local = span - local
+        animPhase = stutter.anchor + local
+      } else if (stutter.on) {
+        // exit: keep real playhead (already advanced) — do not rewind to the loop
+        stutter.on = false
         animPhase = phase
       }
 
@@ -1818,11 +1817,9 @@
         }
       }
 
-      // floor / cash: advance only when not stuttering; while stuttering, freeze motion
-      if (!leets['9']) {
-        groundTex.offset.y += dt * 0.42 * pace
-        updateFalling(dt)
-      }
+      // keep world time running under the stutter (playhead never freezes)
+      groundTex.offset.y += dt * 0.42 * pace
+      updateFalling(dt)
 
       // camera: home idle sway, or zoom to cat face on 6
       const t = animPhase * 0.06
